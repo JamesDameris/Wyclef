@@ -58,6 +58,7 @@ function remove (sentence) {
 }
 // to further implement functionality of unify, use a wrapper function that allows multiple layers of sentences to be unified
 function unify (sentence) {
+    console.log("Unifying: " + sentence);
     let unified = [{binding: {}, subtree: DB}];
     let tokens = parseSentence(sentence);
 
@@ -74,7 +75,7 @@ function unify (sentence) {
                         let nextUni = { binding: uni.binding, subtree: uni.subtree[key] };
                         nextUnified.push(nextUni);
                     } else {
-                        console.log("No Instance of", token[0], "here!");
+                        // console.log("No Instance of", token[0], "here!");
                     }
                 }
             }
@@ -85,6 +86,7 @@ function unify (sentence) {
 }
 
 function query(statement) {
+    console.log("Querying: " + statement);
     let pStatement = parseStatement(statement);
     if (pStatement[0] == "EQ") {
         return equivQuery(pStatement);
@@ -93,15 +95,19 @@ function query(statement) {
     }
 }
 
+/* current implementation compares entire objects, not individual sub-objects for example: 
+ * table 1's top row isnt being compared against table 2's top row,  
+ * rather all of the top rows in all the tables are being compared 
+ * against all the bottom rows in all the tables
+ */
 function equivQuery(pStatement) {
     let unis = [];
     unis.push(unify(pStatement[1]));
     for (let i = 2; i < pStatement.length; i++) {
         let newUni = unify(pStatement[i]);
-        // console.log(Object.values(unis[i-2]));
-        // console.log(Object.values(newUni));
         let newUniValues = [];
         let prevUniValues = [];
+        console.log(newUni);
         for (let j = 0; j < newUni.length; j++) {
             newUniValues.push(Object.values(newUni[j]));
             prevUniValues.push(Object.values(unis[i-2][j]));
