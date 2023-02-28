@@ -1,0 +1,67 @@
+{ "socialPractice": 
+  { "name": "coffee date",
+    "roles": ["inviter", "invitee"],
+    "intialState": 
+    [
+      {"beverage": 
+      [
+        {"Coffee": ["Cappuccino", "Latte", "Americano", "Cup of Coffee", "Drip Coffee", "Cold Brew", "Shot of Espresso"] },
+        {"Tea": ["Matcha", "Jasmine", "Oolong", "Earl gray", "Camomile"] },
+         "Water"
+      ] 
+      },
+      "Sugar Cube",
+      "Packet of Sugar",
+      "Half & Half",
+      "Chair", 
+      {"Wifi": 
+        {"Wifi Name": "Coffee",
+         "Wifi Password": "latte"} 
+        },
+      "Espresso Machine",
+      "Portafilter",
+      "Tamper",
+      "Pitcher",
+      "Napkin"
+    ],
+    "actions": 
+    [
+      {"action": "Order", 
+         "conditions": [ "data beverage!B!T" ] ,
+         "outcomes": [ "insert Actor!beverage!Ordered" ] 
+      },
+      {"action": "[Actor]: Drink your [Beverage]",
+         "conditions": [ "Actor!beverage!B" ],
+         "outcomes": [ "incr Actor!beverage!amount 1", "incr Actor!energy" ] 
+      },
+      {"action": "[Actor]: Ask How about the Weather", 
+         "conditions": [ "NULL" ], 
+         "outcomes": [ "insert practice.response.Y.X", "decr Invitee.relationship.Inviter.evaluation.affability" ] 
+      },
+      {"action": "[Actor]: Critique date's [Other!beverage] choice", 
+         "conditions": [ "NULL" ],
+         "outcomes": [ "Invitee.relationship.Inviter.evaluation.personality!" ] 
+      },
+      {"action": "[Actor]: Talk about [Actor!job]", 
+         "conditions": [ "NULL" ],
+         "outcomes": [ "Invitee.relationship.Inviter.evaluation.stability" ] 
+      },
+      {"action": "[Actor]: Ask about [Hobby]", 
+         "conditions": [ "NULL" ],
+         "outcomes": [ "call update_conversation.X.Y", "Chance of Similar Hobby", "insert practice.[Actor!hobby]" ] 
+      },
+      {"action": "[Actor]: Spill [Actor!beverage]", 
+         "conditions": [ "NULL" ],
+         "outcomes": [ "Actor!mood", "insert practice.spill.Actor.Other" ] 
+      }
+    ],
+    "utilities":
+    [
+      {"utility": "update_conversation", 
+         "conditions": [ "NULL" ],
+         "outcomes": [ "" ]
+      }
+    ],
+    "description": "Simple Coffee date, with romantic interest or a friend/acquaintance. Third Wave coffee shop with Espresso drinks, lots of remote tech workers in the shop"
+  }
+}

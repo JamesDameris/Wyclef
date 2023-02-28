@@ -9,7 +9,7 @@ function clone(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
-function ParseSentence (sentence) {
+function parseSentence (sentence) {
     let currentTerm = "";
     let tokens = [];
     
@@ -27,8 +27,13 @@ function ParseSentence (sentence) {
     return tokens;
 }
 
+function parseStatement (statement) {
+    // "EQ practice.ticTacToe.T.board.top.l.P1 practice.ticTacToe.T.board.bottom.l.P2"
+    return statement.split(" ");
+}
+
 function insert (sentence) {
-    let tokens = ParseSentence(sentence);
+    let tokens = parseSentence(sentence);
     let node = DB;
     // iterate through tokens
     for (token of tokens) {
@@ -41,7 +46,7 @@ function insert (sentence) {
 }
 
 function remove (sentence) {
-    let tokens = ParseSentence(sentence);
+    let tokens = parseSentence(sentence);
     
     let node = DB;
     // iterate through tokens
@@ -51,10 +56,10 @@ function remove (sentence) {
     let last = tokens[tokens.length-1];
     delete node[last[0]];
 }
-
+// to further implement functionality of unify, use a wrapper function that allows multiple layers of sentences to be unified
 function unify (sentence) {
     let unified = [{binding: {}, subtree: DB}];
-    let tokens = ParseSentence(sentence);
+    let tokens = parseSentence(sentence);
 
     for (token of tokens) {
         let nextUnified = [];
@@ -79,4 +84,37 @@ function unify (sentence) {
     return unified.map(uni=>uni.binding);
 }
 
-module.exports = { ParseSentence, insert, remove, unify, DB } 
+function query(statement) {
+    let pStatement = parseStatement(statement);
+    if (pStatement[0] == "EQ") {
+        return equivQuery(pStatement);
+    } else if (pStatement[0] == "NEQ") {
+        return !equivQuery(pStatement);
+    }
+}
+
+function equivQuery(pStatement) {
+    let unis = [];
+    unis.push(unify(pStatement[1]));
+    for (let i = 2; i < pStatement.length; i++) {
+        let newUni = unify(pStatement[i]);
+        // console.log(Object.values(unis[i-2]));
+        // console.log(Object.values(newUni));
+        let newUniValues = [];
+        let prevUniValues = [];
+        for (let j = 0; j < newUni.length; j++) {
+            newUniValues.push(Object.values(newUni[j]));
+            prevUniValues.push(Object.values(unis[i-2][j]));
+        }
+        console.log(prevUniValues);
+        console.log(newUniValues);
+        if (newUniValues.toString() == prevUniValues.toString()) {
+            unis.push(newUni);
+        } else {
+            return false;
+        }
+    }
+    return true;
+}
+
+module.exports = { parseSentence, insert, remove, unify, parseStatement, query, DB } 
