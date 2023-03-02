@@ -92,6 +92,8 @@ function query(statement) {
         return equivQuery(pStatement);
     } else if (pStatement[0] == "NEQ") {
         return !equivQuery(pStatement);
+    } else if (pStatement[0] == "NOT") {
+        return notQuery(pStatement);
     }
 }
 
@@ -100,14 +102,14 @@ function query(statement) {
  * rather all of the top rows in all the tables are being compared 
  * against all the bottom rows in all the tables
  */
-function equivQuery(pStatement) {
+function equivQuery(pStatement) { // next step return list of key value pair sets like in unify
     let unis = [];
     unis.push(unify(pStatement[1]));
     for (let i = 2; i < pStatement.length; i++) {
         let newUni = unify(pStatement[i]);
+        console.log(newUni);
         let newUniValues = [];
         let prevUniValues = [];
-        console.log(newUni);
         for (let j = 0; j < newUni.length; j++) {
             newUniValues.push(Object.values(newUni[j]));
             prevUniValues.push(Object.values(unis[i-2][j]));
@@ -120,7 +122,45 @@ function equivQuery(pStatement) {
             return false;
         }
     }
+    console.log(unis);
     return true;
 }
 
-module.exports = { parseSentence, insert, remove, unify, parseStatement, query, DB } 
+function unifyAll(sentenceSet) { // next step return list of key value pair sets like in unify
+    let possibleBindings = [ {} ];
+
+    for (let i = 0; i < sentenceSet.length; i++) {
+        let iterativeBindings = [];
+        let newBinding = unify(sentenceSet[i]);
+        // console.log("New Binding", newBinding);
+        for (let uni of possibleBindings) {
+            for (let binding of newBinding) {
+                let newKeys = Object.keys(binding).filter(k=>!Object.keys(uni).includes(k)); // returns all the keys that are not in uni
+                let oldKeys = Object.keys(binding).filter(k=>Object.keys(uni).includes(k)); //  returns all the keys that are in uni
+                let thereExistsAnIncompatibileKey = oldKeys.some(k=>binding[k]!=uni[k]); // if there isnt at any key in binding that doesn't matches the same key in uni
+                if (thereExistsAnIncompatibileKey) {
+                    continue;
+                } else {
+                    let nextUni = clone(uni); // clone the current compatible bindings 
+                    for (newKey of newKeys) { // and add the new compatible bindings to the set of bindings
+                        nextUni[newKey] = binding[newKey];
+                    }
+                    iterativeBindings.push(nextUni); // then update iterativeBindings (which is reset to empty every unify)
+                }
+            }
+        }
+        // console.log("iterartive", iterativeBindings);
+        possibleBindings = iterativeBindings;
+    }
+    return possibleBindings;
+}
+
+module.exports = { parseSentence, insert, remove, unify, parseStatement, query, unifyAll, DB } 
+
+// 1st loop [ { Y: 'woof' }, { Y: 'meow' } ]
+
+// 2nd loop [ { X: 'foo', Y: 'meow' } ] 
+
+// 3rd loop [ { X: 'foo', Y: 'meow' } ] 
+
+// [ { X: 'foo', Y: 'bar' }, { X: 'foo', Y: 'meow' }, { X: 'some', Y: 'other' } ]
