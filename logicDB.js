@@ -169,9 +169,9 @@ function query(statements) {
                 for (let binding of newBinding) {
                     let newKeys = Object.keys(binding).filter(k=>!Object.keys(uni).includes(k)); // returns all the keys that are not in uni
                     let oldKeys = Object.keys(binding).filter(k=>Object.keys(uni).includes(k)); //  returns all the keys that are in uni
-                    let thereExistsOnlyCompatibileKeys = !oldKeys.some(k=>binding[k]!=uni[k]); // if there isnt at any key in binding that doesn't matches the same key in uni
-                    if (thereExistsOnlyCompatibileKeys) {
-                        continue;
+                    let allKeysMatch = !oldKeys.some(k=>binding[k]!=uni[k]); // if all keys in binding match the same key in uni
+                    if (allKeysMatch) {
+                        continue; // remove if all keys match (NOT case drops unis that match with newBinding)
                     } else {
                         let nextUni = clone(uni); // clone the current compatible bindings 
                         for (newKey of newKeys) { // and add the new compatible bindings to the set of bindings
