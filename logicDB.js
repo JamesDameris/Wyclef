@@ -80,12 +80,16 @@ function unify (sentence) {
     return unified.map(uni=>uni.binding);
 }
 
-function query(statements) {
+function unorderedQuery(statements) {
     console.log("Querying: " + statements);
     let possibleBindings = [ {} ];
 
     for (let i = 0; i < statements.length; i++) {
-        if (statements[i].split(" ")[0] == "EQ" || statements[i].split(" ")[0] == "NEQ" || statements[i].split(" ")[0] == "NOT") {
+        let parts = statements[i].split(" ");
+        if (parts.length > 1) {
+            if (parts[0] != "EQ" && parts[0] != "NEQ" && parts[0] != "NOT") {
+                console.log("Error: Invalid operator");
+            }
             continue;
         }
         let iterativeBindings = [];
@@ -113,24 +117,27 @@ function query(statements) {
     for (let i = 0; i < statements.length; i++) {
         if (statements[i].split(" ")[0] == "EQ") {
             EQStatement = statements[i].split(" ");
+            let isVar1 = isUppercase(EQStatement[1][0]);
+            let isVar2 = isUppercase(EQStatement[2][0]);
             console.log("Checking Equality on:", EQStatement[1], "and", EQStatement[2]);
             let iterativeBindings = [];
             for (let uni of possibleBindings) {
-                if ((EQStatement[1] in uni) && (EQStatement[2] in uni) ) { // If both arguments are bound variables or constants, we compare their values and discard the uni if they're not equal.
-                    if (uni[EQStatement[1]] != uni[EQStatement[2]]) {
+                concreteVal1 = isVar1 ? uni[EQStatement[1]] : EQStatement[1];
+                concreteVal2 = isVar2 ? uni[EQStatement[2]] : EQStatement[2];
+                if (concreteVal1 && concreteVal2) { // If both arguments are bound variables or constants, we compare their values and discard the uni if they're not equal.
+                    if (concreteVal1 != concreteVal2) {
                         continue; // if not equal, discard the uni
                     } else {
-                        let nextUni = clone(uni); // if equal, keep the uni
-                        iterativeBindings.push(nextUni); 
+                        iterativeBindings.push(uni); 
                     }
-                } else if ((EQStatement[1] in uni) && !(EQStatement[2] in uni)) { // If one of the two arguments is an unbound variable and one of them is a bound variable or constant, we establish a new binding for the unbound variable so that it's now bound to the same thing as the other argument.
+                } else if (concreteVal1 && !concreteVal2) { // If one of the two arguments is an unbound variable and one of them is a bound variable or constant, we establish a new binding for the unbound variable so that it's now bound to the same thing as the other argument.
                     let nextUni = clone(uni);
-                    nextUni[EQStatement[2]] = nextUni[EQStatement[1]];
+                    nextUni[EQStatement[2]] = concreteVal1;
                     iterativeBindings.push(nextUni);
                     
-                } else if (!(EQStatement[1] in uni) && (EQStatement[2] in uni)) {
+                } else if (!concreteVal1 && concreteVal2) { // inverse case
                     let nextUni = clone(uni);
-                    nextUni[EQStatement[1]] = nextUni[EQStatement[2]];
+                    nextUni[EQStatement[1]] = concreteVal2;
                     iterativeBindings.push(nextUni);
                 
                 } else { // If both arguments are unbound variables, that's an error case – we can print an error message to warn the user that they've done something invalid.
@@ -149,14 +156,12 @@ function query(statements) {
                     if (uni[NEQStatement[1]] == uni[NEQStatement[2]]) {
                         continue; // if equal, discard the uni
                     } else {
-                        let nextUni = clone(uni); // if not equal, keep the uni
-                        iterativeBindings.push(nextUni); 
+                        iterativeBindings.push(uni); 
                     }
                 } else {
                     // If either argument is unbound variables, that's an error case – we can print an error message to warn the user that they've done something invalid.
-                    console.log("Error:", (NEQStatement[1] in uni) ? NEQStatement[1] + " bound" : NEQStatement[1], (NEQStatement[2] in uni) ? NEQStatement[2] + " bound" : NEQStatement[2], "unbound");
-                    let nextUni = clone(uni); // keeping uni intact since this is a error case and we don't want to break possibleBindings if it fails here for now
-                    iterativeBindings.push(nextUni); 
+                    console.log("Error:", (NEQStatement[1] in uni) ? NEQStatement[1] + " bound" : NEQStatement[1] + " unbound", (NEQStatement[2] in uni) ? NEQStatement[2] + " bound" : NEQStatement[2] + " unbound");
+                    iterativeBindings.push(uni); 
                 }
                 possibleBindings = iterativeBindings;
             }
@@ -164,24 +169,19 @@ function query(statements) {
             // NOT basically drops every uni in possibleBindings for which the operator sentence successfully unifies with the previously bound values (and keeps the rest)
             let iterativeBindings = [];
             let newBinding = unify(statements[i].split(" ")[1]);
-            console.log("New Binding", newBinding);
+            console.log("Checking that binding:", newBinding, "is NOT in Query");
             for (let uni of possibleBindings) {
                 for (let binding of newBinding) {
                     let newKeys = Object.keys(binding).filter(k=>!Object.keys(uni).includes(k)); // returns all the keys that are not in uni
                     let oldKeys = Object.keys(binding).filter(k=>Object.keys(uni).includes(k)); //  returns all the keys that are in uni
                     let allKeysMatch = !oldKeys.some(k=>binding[k]!=uni[k]); // if all keys in binding match the same key in uni
                     if (allKeysMatch) {
-                        continue; // remove if all keys match (NOT case drops unis that match with newBinding)
+                        continue; // remove if all keys matched
                     } else {
-                        let nextUni = clone(uni); // clone the current compatible bindings 
-                        for (newKey of newKeys) { // and add the new compatible bindings to the set of bindings
-                            nextUni[newKey] = binding[newKey];
-                        }
-                        iterativeBindings.push(nextUni); // then update iterativeBindings (which is reset to empty every unify)
+                        iterativeBindings.push(uni);
                     }
                 }
             }
-            // console.log("iterartive", iterativeBindings);
             possibleBindings = iterativeBindings;
         } else {
             continue;
@@ -190,35 +190,6 @@ function query(statements) {
     return possibleBindings; 
 }
 
-/* current implementation compares entire objects, not individual sub-objects for example: 
- * table 1's top row isnt being compared against table 2's top row,  
- * rather all of the top rows in all the tables are being compared 
- * against all the bottom rows in all the tables
- */
-// function equivQuery(pStatement) { // next step return list of key value pair sets like in unify
-//     let unis = [];
-//     unis.push(unify(pStatement[1]));
-//     for (let i = 2; i < pStatement.length; i++) {
-//         let newUni = unify(pStatement[i]);
-//         console.log(newUni);
-//         let newUniValues = [];
-//         let prevUniValues = [];
-//         for (let j = 0; j < newUni.length; j++) {
-//             newUniValues.push(Object.values(newUni[j]));
-//             prevUniValues.push(Object.values(unis[i-2][j]));
-//         }
-//         console.log(prevUniValues);
-//         console.log(newUniValues);
-//         if (newUniValues.toString() == prevUniValues.toString()) {
-//             unis.push(newUni);
-//         } else {
-//             return false;
-//         }
-//     }
-//     console.log(unis);
-//     return true;
-// }
-
 function unifyAll(sentenceSet) { // next step return list of key value pair sets like in unify
     console.log("Unifying Sentences: ", sentenceSet);
     let possibleBindings = [ {} ];
@@ -226,9 +197,7 @@ function unifyAll(sentenceSet) { // next step return list of key value pair sets
     for (let i = 0; i < sentenceSet.length; i++) {
         let iterativeBindings = [];
         let newBinding = unify(sentenceSet[i]);
-        //console.log("New Binding", newBinding);
         for (let uni of possibleBindings) {
-            //console.log("Uni: ", uni);
             for (let binding of newBinding) {
                 let newKeys = Object.keys(binding).filter(k=>!Object.keys(uni).includes(k)); // returns all the keys that are not in uni
                 let oldKeys = Object.keys(binding).filter(k=>Object.keys(uni).includes(k)); //  returns all the keys that are in uni
@@ -244,18 +213,10 @@ function unifyAll(sentenceSet) { // next step return list of key value pair sets
                 }
             }
         }
-        // console.log("iterartive", iterativeBindings);
         possibleBindings = iterativeBindings;
     }
     return possibleBindings;
 }
 
-module.exports = { parseSentence, insert, remove, unify, query, unifyAll, DB } 
+module.exports = { parseSentence, insert, remove, unify, unorderedQuery, unifyAll, DB } 
 
-// 1st loop [ { Y: 'woof' }, { Y: 'meow' } ]
-
-// 2nd loop [ { X: 'foo', Y: 'meow' } ] 
-
-// 3rd loop [ { X: 'foo', Y: 'meow' } ] 
-
-// [ { X: 'foo', Y: 'bar' }, { X: 'foo', Y: 'meow' }, { X: 'some', Y: 'other' } ]

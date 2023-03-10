@@ -63,6 +63,7 @@ sentences.push("practice.ticTacToe.joe.bill.board.bottom.r!o");
 sentences.push("practice.ticTacToe.joe.bill.player.joe.piece!x");
 sentences.push("practice.ticTacToe.joe.bill.player.bill.piece!o");
 
+
 /* x o x
  * x o e
  * x e o
@@ -78,13 +79,14 @@ DB.remove("practice.ticTacToe.table1.whoseMove");
 // console.log(DB.unify("practice.ticTacToe.T.players.P"));
 // console.log(DB.query("EQ practice.ticTacToe.T.board.top.l.P1 practice.ticTacToe.T.board.bottom.l.P2")); // next step
 // console.log(DB.query("EQ practice.ticTacToe.table1.board.top.l.P1 practice.ticTacToe.table1.board.center.l.P2 practice.ticTacToe.table1.board.bottom.l.P3"));
-console.log(DB.query(["practice.ticTacToe.Player1.Player2.board.top.Col!Piece",
+console.log(DB.unorderedQuery(["practice.ticTacToe.Player1.Player2.board.top.Col!Piece",
                       "practice.ticTacToe.Player1.Player2.board.middle.Col!Piece",
                       "practice.ticTacToe.Player1.Player2.board.bottom.Col!Piece",
                       "practice.ticTacToe.Player1.Player2.player.Winner.piece!Piece",
                       // Grab the loser so we can mark them as having lost
                       "practice.ticTacToe.Player1.Player2.player.Loser",
                       "NOT practice.ticTacToe.Player1.Player2.player.bill",
+                      "EQ Bartender bill",
                       "NEQ Winner Loser"]));
 
 // console.log(DB.unifyAll(["fizz.buzz.X" ,"some.other.Y",  "X.Y.woof" ]))
