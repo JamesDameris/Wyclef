@@ -12,6 +12,7 @@
 
 const fs = require('fs');
 const DB = require("./logicDB.js");
+const C = require("./data/characters.js");
 // Practice Parser File
 let sentences = [];
 let tokenList = [];
@@ -69,10 +70,12 @@ sentences.push("practice.ticTacToe.joe.bill.player.bill.piece!o");
  * x e o
 */
 
-for (s of sentences) {
-    tokenList.push(DB.parseSentence(s)); 
-    DB.insert(s);
-}
+// for (s of sentences) {
+//     tokenList.push(DB.parseSentence(s)); 
+//     DB.insert(s);
+// }
+insertSentences(sentences);
+
 DB.remove("practice.ticTacToe.table1.whoseMove");
 // How should we handle setting all things in unify to a certain value? Should parse sentence take care of logic saying ex: unify remove practice.ticTacToe.T.players.P
 // Answer: keep functions as they are. Have a second layer of wrapper functions that combine the two.
@@ -100,3 +103,34 @@ console.log(DB.unorderedQuery(["practice.ticTacToe.Player1.Player2.board.top.Col
 // }
 
 // parseJson("coffeedate");
+
+
+function insertSentences (sentences) {
+    for (let sentence of sentences) {
+        DB.insert(sentence);
+    }
+}
+
+function removeSentences (sentences) {
+    for (let sentence of sentences) {
+        DB.remove(sentence);
+    }
+}
+
+let adrienne = new C.character("Adrienne", "3/20/1990", 160, 45, "brown");
+adrienne.addhobbies = ["watch tv","ski","hike","play soccer"];
+adrienne.addhobbies = ["archery"];
+adrienne.removeHobbies("hike","ski");
+adrienne.printInfo();
+let joe = new C.character("Joe", "7/1/1995", 190, 60, "blue");
+let morgan = new C.character("morgan", "6/11/1990", 170, 50, "green");
+
+
+adrienne.setAffinityFor(joe,4);
+
+adrienne.setAffinityFor(morgan,8);
+
+adrienne.relationshipLevels;
+
+console.log(adrienne.affinity);
+
