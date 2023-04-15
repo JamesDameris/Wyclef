@@ -218,5 +218,8 @@ function unifyAll(sentenceSet) { // next step return list of key value pair sets
     return possibleBindings;
 }
 
+// in the database, have locations and in locations have a move function to move characters between different location
+
+
 module.exports = { parseSentence, insert, remove, unify, unorderedQuery, unifyAll, DB } 
 

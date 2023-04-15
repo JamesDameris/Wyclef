@@ -117,20 +117,10 @@ function removeSentences (sentences) {
     }
 }
 
-let adrienne = new C.character("Adrienne", "3/20/1990", 160, 45, "brown");
-adrienne.addhobbies = ["watch tv","ski","hike","play soccer"];
-adrienne.addhobbies = ["archery"];
-adrienne.removeHobbies("hike","ski");
+let adrienne = new C.character("Adrienne");
+
 adrienne.printInfo();
-let joe = new C.character("Joe", "7/1/1995", 190, 60, "blue");
-let morgan = new C.character("morgan", "6/11/1990", 170, 50, "green");
-
-
-adrienne.setAffinityFor(joe,4);
-
-adrienne.setAffinityFor(morgan,8);
-
-adrienne.relationshipLevels;
-
-console.log(adrienne.affinity);
+let joe = new C.character("Joe");
+let morgan = new C.character("morgan");
+joe.printInfo();
 

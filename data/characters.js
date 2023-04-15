@@ -1,23 +1,37 @@
 
-class character {
-    constructor (name, dob, height, weight, eyeColor) {
+class character { // change to make only name required, all others are generated
+    constructor (name, height = Math.floor(Math.random() * (200-140) + 140)) {
         this.name = name;
-        this.dob = new Date(dob); // month day year
+        this.dob = new Date(Math.random() * (new Date("Jan 1 2005").valueOf())); // month day year
+        
         this.height = height; // in centimeters
-        this.weight = weight; // in kilograms
-        this.eyeColor = eyeColor;
+
+        this.weight = Math.floor((((height - 140)/60 ) * 65) + 45) + Math.floor(Math.random() * (6) - 3);; // in kilograms 110-45 with rand deviation of 3 kgs
+        
+        // randomizing eyeColor
+        let posShade = ["dark","light",""];
+        let posColor = ["brown","blue","green"];
+        this.eyeColor = posShade[Math.floor(Math.random() * posShade.length)];
+        let index = Math.floor(Math.random() * posColor.length)
+        if (this.eyeColor !== "" ) { 
+            this.eyeColor = this.eyeColor + " " + posColor[index]
+        } else { 
+            this.eyeColor = posColor[index]; 
+        }
         // calculations for getting age
         let date2 = new Date();
         let elapsedMS = date2.getTime() - this.dob.getTime();
         this.age = Math.trunc(elapsedMS * 3.17098E-11);
-        
-        this.happy = 0;
-        this.angry = 0;
-        this.sad = 0;
-        this.hunger = 0;
-        this.thirst = 0;
-        this.anxiety = 0;
+        // randomizing hobbies
+        let posHobbies = ["Swim","Watch TV","Sing","Dance","Surf","Golf","Fish","Bike","Play Video Games"];
+        let randomizer = Math.floor(Math.random() * 5 + 1);
         this.hobbies = [];
+        let range = Math.floor(Math.random()*posHobbies.length);
+        for (let i = 0; i < range; i ++) {
+            let ii = (i + randomizer)%posHobbies.length;
+            this.hobbies.push(posHobbies[ii]);
+        }
+        
         
         // character affinity list
         this.affinity = {};
@@ -41,7 +55,6 @@ class character {
         } else {
             console.log("I don't like to do anything at the moment.");
         }
-        console.log(this.happiness);
     }
 
     set addhobbies (val) {
