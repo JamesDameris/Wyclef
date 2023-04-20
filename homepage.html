@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<h1>
+    Welcome to Wyclif!
+</h1>
+    Insert character names: <input type="text" id="newname" onfocus = "this.value = ' '"> <br>
+    <input type = "button" onclick = "addChar()" value = "Add character"><br><br>
+    <button onclick = "doneWCharac()"> Click me when done adding characters</button><br>
+    <p id = "test"></p>
+
+    Choose one action to take: <br>
+    <body onload = "actionButtons();"> </body>
+    <p id = "action"> </p>
+    
+    <style>
+       /*body{
+            background-color:rgb(77,166,255);
+            font-family: 'Playfair Displayxs';
+       }*/
+        .sidebar{
+            float: right;
+            display: block;
+            width: 400px;
+            height: 600px;
+        }
+        .displayChar{
+            display: none;
+        }
+    </style>
+
+    <script>
+        var play_as;
+        var actionsto_take = ["Order", "Drink your beverage", "Ask 'How 'bout the weather?'", "Critique other's beverage choice", "Talk about job", "Ask about hobby", "Spill beverage"];
+        var character_list = new Array();
+        var info = {David : "Hi", Rosie : "Walked", James : "Ran"};
+        var charnum = 0;
+
+        function addChar(){
+            let newchar = document.getElementById("newname").value;
+            character_list.push(newchar);
+            info[newchar] = [];
+        }
+        function doneWCharac(){
+            play_as = character_list[0];
+            document.getElementById("test").innerHTML = play_as;
+        }
+        function actionButtons(){
+            for(var i = 0; i<actionsto_take.length; i++){
+                var button = document.createElement("button");
+                var action = document.createTextNode(actionsto_take[i]);
+                button.appendChild(action);
+                button.onclick = function(event){
+                    var action_totake = event.target.innerText;
+                    add_action(action_totake);
+                };
+                document.body.appendChild(button);
+            }
+        }
+        function add_action(action){
+            document.getElementById("action").innerHTML = action;
+            let newArray = new Array;
+            newArray.push(info[play_as]);
+            newArray.push(action);
+            info[play_as] = newArray;
+            charnum = (charnum++) % character_list.length;
+            play_as = character_list[charnum];
+        }
+        
+        setInterval(display, 1000);
+        function display(){
+                document.getElementById("info").innerHTML = Object.entries(info);              
+        }
+    </script>
+
+    <div class = "sidebar">
+        Actions taken by: 
+        <p id = "info"> </p>
+    </div>
+</html>
