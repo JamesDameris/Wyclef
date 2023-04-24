@@ -12,7 +12,7 @@
 
 const fs = require('fs');
 const DB = require("./logicDB.js");
-const C = require("./data/characters.js");
+const C = require("./public/characters.js");
 // Practice Parser File
 let sentences = [];
 let tokenList = [];

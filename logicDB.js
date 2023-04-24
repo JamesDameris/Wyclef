@@ -220,6 +220,10 @@ function unifyAll(sentenceSet) { // next step return list of key value pair sets
 
 // in the database, have locations and in locations have a move function to move characters between different location
 
+window.db = {
+    DB, isUppercase, unifyAll, remove, unorderedQuery, unify, insert, clone, parseSentence
+};
 
-module.exports = { parseSentence, insert, remove, unify, unorderedQuery, unifyAll, DB } 
+
+// module.exports = { parseSentence, insert, remove, unify, unorderedQuery, unifyAll, DB } 
 

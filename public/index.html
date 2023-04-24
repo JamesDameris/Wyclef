@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<h1>
+    Welcome to Wyclef!
+</h1>
+    Insert character names: 
+    <input type="text" id="newname" onfocus = "this.value = ' '"> 
+    <br><br>
+    <button onclick = "addChar()" >Add Character</button>
+    <br><br>
+    <button onclick = "doneWCharac()">Done Adding Characters</button>
+    <br>
+    <p id = "test"></p>
+    <br>
+    Choose one action to take: 
+    <br>
+    <body onload = "actionButtons();"> </body>
+    <p id = "action"> </p>
+    
+    <style>
+       body {
+            font-family: 'Playfair Displayxs';
+            flex: auto;
+       }
+        .sidebar{
+            float: right;
+            display: block;
+            width: 400px;
+            height: 600px;
+            border-width: 2px;
+            border-color: black;
+        }
+        .displayChar{
+            display: none;
+        }
+        button{
+            float: left;
+            border: 1px solid black;
+            border-radius: 30px;
+            background-color: white;
+            transition-duration: .2s;
+        }
+        button:hover {
+            background-color: black; 
+            color: white;
+        }
+    </style>
+
+    <script src="./homepage.js"></script>
+    <script src="./characters.js"></script>
+    <!-- <script src="./logicDB.js"></script> -->
+
+    <div class = "sidebar">
+        Actions taken by: 
+        <p id = "info"> </p>
+    </div>
+</html>

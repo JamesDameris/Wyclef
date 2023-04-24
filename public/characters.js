@@ -1,5 +1,4 @@
-
-class character { // change to make only name required, all others are generated
+class MyCharacter { // change to make only name required, all others are generated
     constructor (name, height = Math.floor(Math.random() * (200-140) + 140)) {
         this.name = name;
         this.dob = new Date(Math.random() * (new Date("Jan 1 2005").valueOf())); // month day year
@@ -8,15 +7,15 @@ class character { // change to make only name required, all others are generated
 
         this.weight = Math.floor((((height - 140)/60 ) * 65) + 45) + Math.floor(Math.random() * (6) - 3);; // in kilograms 110-45 with rand deviation of 3 kgs
         
-        // randomizing eyeColor
+        // randomizing eye_color
         let posShade = ["dark","light",""];
         let posColor = ["brown","blue","green"];
-        this.eyeColor = posShade[Math.floor(Math.random() * posShade.length)];
+        this.eye_color = posShade[Math.floor(Math.random() * posShade.length)];
         let index = Math.floor(Math.random() * posColor.length)
-        if (this.eyeColor !== "" ) { 
-            this.eyeColor = this.eyeColor + " " + posColor[index]
+        if (this.eye_color !== "" ) { 
+            this.eye_color = this.eye_color + " " + posColor[index]
         } else { 
-            this.eyeColor = posColor[index]; 
+            this.eye_color = posColor[index]; 
         }
         // calculations for getting age
         let date2 = new Date();
@@ -41,7 +40,7 @@ class character { // change to make only name required, all others are generated
         console.log("My name is",this.name+".");
         console.log("I am",this.age,"years old.");
         console.log("I weight",this.weight,"kilograms and I am",this.height,"centimeters tall.");
-        console.log("I have",this.eyeColor,"eyes.");
+        console.log("I have",this.eye_color,"eyes.");
         let hobbyAmount = 0;
         if (this.hobbies) {hobbyAmount = this.hobbies.length;}
         if (hobbyAmount > 1) {
@@ -102,7 +101,8 @@ class character { // change to make only name required, all others are generated
     }
 }
 
+window.character = {
+    MyCharacter
+};
 
-
-
-module.exports = {character}
+// module.exports = {character}
