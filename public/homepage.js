@@ -11,7 +11,7 @@ function addChar(){
         newcharClass = new window.character.MyCharacter(newchar);
         character_list.push(newchar);
         info[newchar] = [JSON.stringify(newcharClass)];
-        console.log(newcharClass);
+        console.log(newchar," ",newcharClass);
         display();
     }
     document.getElementById("newname").value = "";
