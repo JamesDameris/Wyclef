@@ -1,9 +1,11 @@
-
+// const DB = require("./public/logicDB.js");
 var play_as;
+var current_id = 0;
 var actionsto_take = ["Order a beverage", "Drink your beverage", "Ask 'How 'bout the weather?'", "Critique other's beverage choice", "Talk about job", "Ask about hobby", "Spill beverage"];
 var character_list = new Array();
 var info = {};
 var charnum = 0;
+
 
 function addChar(){
     let newchar = document.getElementById("newname").value;
@@ -13,6 +15,7 @@ function addChar(){
         info[newchar] = [JSON.stringify(newcharClass)];
         console.log(newchar," ",newcharClass);
         display();
+        charnum++;
     }
     document.getElementById("newname").value = "";
 }
@@ -24,6 +27,7 @@ function doneWCharac(){
     done.innerText = "Playing as: " + play_as;
     document.getElementById("left-section").appendChild(done);
     actionButtons();
+    console.log(character_list);
 }
 function actionButtons(){
     for(var i = 0; i<actionsto_take.length; i++){
@@ -33,12 +37,12 @@ function actionButtons(){
         button.appendChild(action);
         button.onclick = function(event){
             var action_totake = event.target;
-            add_action(action_totake);
+            take_action(action_totake);
         };
         document.getElementById("actions").appendChild(button);
     }
 }
-function add_action(action){
+function take_action(action){
     // add so that on action taken, add to character list action
     char_actions = document.getElementById(`${play_as} Actions`);
     var newAction = document.createElement('li')
@@ -48,7 +52,10 @@ function add_action(action){
         char_actions.removeChild(char_actions.childNodes[0]);
     }
     char_actions.appendChild(newAction);
-    document.getElementById("actions").removeChild(action)
+    document.getElementById("actions").removeChild(action);
+    current_id = current_id + 1;
+    play_as = character_list[current_id%charnum];
+    document.getElementById('my-char').innerText = "Playing as: " + play_as;
 }
 
 function display(){
