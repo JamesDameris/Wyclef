@@ -18,6 +18,7 @@ function addChar(){
         charnum++;
         window.insert(`characters.${newchar.toLowerCase()}`, character);
         console.log(window.DB);
+        console.log("added");
     }
     document.getElementById("newname").value = "";
 }
