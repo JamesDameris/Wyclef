@@ -1,5 +1,5 @@
 
-DB = {};
+var DB = {};
 
 function isUppercase(char) {
     return /[A-Z]/.test(char);

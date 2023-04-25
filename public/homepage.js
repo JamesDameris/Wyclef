@@ -1,4 +1,4 @@
-// const DB = require("./public/logicDB.js");
+// import * as db from "./logicDB.js" 
 var play_as;
 var current_id = 0;
 var actionsto_take = ["Order a beverage", "Drink your beverage", "Ask 'How 'bout the weather?'", "Critique other's beverage choice", "Talk about job", "Ask about hobby", "Spill beverage"];
@@ -16,6 +16,7 @@ function addChar(){
         console.log(newchar," ",newcharClass);
         display();
         charnum++;
+        console.log(window.insert(`characters.${newchar}`, character));
     }
     document.getElementById("newname").value = "";
 }
