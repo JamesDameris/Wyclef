@@ -1,6 +1,6 @@
 
 var play_as;
-var actionsto_take = ["Order", "Drink your beverage", "Ask 'How 'bout the weather?'", "Critique other's beverage choice", "Talk about job", "Ask about hobby", "Spill beverage"];
+var actionsto_take = ["Order a beverage", "Drink your beverage", "Ask 'How 'bout the weather?'", "Critique other's beverage choice", "Talk about job", "Ask about hobby", "Spill beverage"];
 var character_list = new Array();
 var info = {};
 var charnum = 0;
@@ -18,47 +18,53 @@ function addChar(){
 }
 function doneWCharac(){
     play_as = character_list[0];
-    document.getElementById("test").innerHTML = play_as;
+    document.getElementById("left-section").removeChild(document.getElementById("start"));
+    var done = document.createElement("h1");
+    done.id = 'my-char';
+    done.innerText = "Playing as: " + play_as;
+    document.getElementById("left-section").appendChild(done);
+    actionButtons();
 }
 function actionButtons(){
     for(var i = 0; i<actionsto_take.length; i++){
         var button = document.createElement("button");
         var action = document.createTextNode(actionsto_take[i]);
+        action.id = `${actionsto_take[i]}`;
         button.appendChild(action);
         button.onclick = function(event){
-            var action_totake = event.target.innerText;
+            var action_totake = event.target;
             add_action(action_totake);
         };
-        document.body.appendChild(button);
+        document.getElementById("actions").appendChild(button);
     }
 }
 function add_action(action){
-    document.getElementById("action").innerHTML = action;
-    let newArray = new Array;
-    newArray.push(info[play_as]);
-    newArray.push(action);
-    info[play_as] = newArray;
-    charnum = (charnum++) % character_list.length;
-    play_as = character_list[charnum];
+    // add so that on action taken, add to character list action
+    char_actions = document.getElementById(`${play_as} Actions`);
+    var newAction = document.createElement('li')
+    newAction.textContent = action.innerText;
+    
+    if (char_actions.childNodes[0].innerText == "No Actions Taken") {
+        char_actions.removeChild(char_actions.childNodes[0]);
+    }
+    char_actions.appendChild(newAction);
+    document.getElementById("actions").removeChild(action)
 }
 
-// setInterval(display,1000);
 function display(){
-    var list = document.createElement('ul');
+
     var charItem = document.createElement('li');
-    list.id = 'infoList';
-    document.getElementById("info").appendChild(list);
+    charItem.id = 'char';
+    
     var def = document.createElement('li');
-    def.innerHTML = "No Actions";
+    def.innerText = "No Actions Taken";
     for (let char of Object.keys(info)) {
-        charItem.innerHTML = `${char}`;
+        charItem.innerHTML = `<i><b style='font-size: 150%;'>${char}<b><i>`;
         var charList = document.createElement('ul');
         charList.id = `${char} Actions`;
         charList.appendChild(def);
         charItem.appendChild(charList);
-        
-        document.getElementById('infoList').appendChild(charItem); 
-    }
-                 
+        document.getElementById('character-list').appendChild(charItem); 
+    }        
 }
 

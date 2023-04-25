@@ -1,40 +1,66 @@
 <!DOCTYPE html>
 <html>
-<h1>
-    Welcome to Wyclef!
-</h1>
-    Insert character names: 
-    <input type="text" id="newname" onfocus = "this.value = ' '"> 
-    <br><br>
-    <button onclick = "addChar()" >Add Character</button>
-    <br><br>
-    <button onclick = "doneWCharac()">Done Adding Characters</button>
-    <br>
-    <p id = "test"></p>
-    <br>
-    Choose one action to take: 
-    <br>
-    <body onload = "actionButtons();"> </body>
-    <p id = "action"> </p>
-    
+<head>
+    <title>Welcome to Wyclef!</title>
     <style>
-       body {
-            font-family: 'Playfair Displayxs';
-            flex: auto;
-       }
-        .sidebar{
-            float: right;
-            display: block;
-            width: 400px;
-            height: 600px;
-            border-width: 2px;
-            border-color: black;
+        body {
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: space-evenly;
         }
-        .displayChar{
-            display: none;
+        #left-section {
+            width: 55%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background-color: #f2f2f296;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        #left-section h1 {
+            font-weight: bold;
+            font-size: 150%; 
+        }
+        #right-section {
+            width: 35%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background-color: #f2f2f296;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        #right-section h1 {
+            font-weight: bold;
+            font-size: 150%; 
+        }
+        #action-container {
+            height: fit-content;
+            overflow-y: scroll;
+            padding: 10px;
+        }
+        #character-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        #character-list > li {
+            margin-bottom: 10px;
+            font-size: 80%;
+        }
+        .sidebar{
+            height: 700px;
+            overflow-y: scroll;
+            padding: 10px;
+        }
+        .actions{
+            list-style-type: none;
+            padding: 0;
+        }
+        .actions li{
+            margin-bottom: 10px;
+            font-weight: bold;
         }
         button{
-            float: left;
             border: 1px solid black;
             border-radius: 30px;
             background-color: white;
@@ -45,13 +71,33 @@
             color: white;
         }
     </style>
-
+</head>
+<body>
+    <div id="left-section">
+        <div id="start">
+            <h1>Welcome to Wyclef!</h1>
+            <label for="newname">Insert character names:</label>
+            <input type="text" id="newname" onfocus="this.value=''">
+            <br><br>
+            <button onclick="addChar()">Add Character</button>
+            <br><br>
+            <button onclick="doneWCharac()">Done Adding Characters</button>
+            <br><br>
+        </div>
+        <h1>Choose an action:</h1>
+        <div id="action-container">
+            <ul id="actions">
+            </ul>
+        </div>
+    </div>
+    <div id="right-section">
+        <div class="sidebar">
+            <h1>Actions taken by:</h1>
+            <div id="character-list"></div>
+        </div>
+    </div>
     <script src="./homepage.js"></script>
     <script src="./characters.js"></script>
     <script src="./logicDB.js"></script>
-
-    <div class = "sidebar">
-        Actions taken by: 
-        <p id = "info"> </p>
-    </div>
+</body>
 </html>
