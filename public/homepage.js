@@ -16,7 +16,8 @@ function addChar(){
         console.log(newchar," ",newcharClass);
         display();
         charnum++;
-        console.log(window.insert(`characters.${newchar}`, character));
+        window.insert(`characters.${newchar.toLowerCase()}`, character);
+        console.log(window.DB);
     }
     document.getElementById("newname").value = "";
 }
@@ -53,13 +54,13 @@ function take_action(action){
         char_actions.removeChild(char_actions.childNodes[0]);
     }
     char_actions.appendChild(newAction);
-    document.getElementById("actions").removeChild(action);
+    document.getElementById("actions").removeChild(action); // use query
     current_id = current_id + 1;
     play_as = character_list[current_id%charnum];
     document.getElementById('my-char').innerText = "Playing as: " + play_as;
 }
 
-function display(){
+function display(){ // change to be on each action (when character is added, say "Character: Added to the Stage (maybe even stage direction)", When action taken say "Character: Took said action")
 
     var charItem = document.createElement('li');
     charItem.id = 'char';
