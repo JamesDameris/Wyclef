@@ -28,6 +28,7 @@ function doneWCharac(){
     var done = document.createElement("h1");
     done.id = 'my-char';
     done.innerText = "Playing as: " + play_as;
+    done.classList.add('fade-in-scene');
     document.getElementById("left-section").appendChild(done);
     actionButtons();
     console.log(character_list);
