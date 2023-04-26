@@ -64,7 +64,7 @@ function display(){ // change to be on each action (when character is added, say
 
     var charItem = document.createElement('li');
     charItem.id = 'char';
-    
+    charItem.classList.add('fade-in');
     var def = document.createElement('li');
     def.innerText = "No Actions Taken";
     for (let char of Object.keys(info)) {
@@ -74,6 +74,6 @@ function display(){ // change to be on each action (when character is added, say
         charList.appendChild(def);
         charItem.appendChild(charList);
         document.getElementById('character-list').appendChild(charItem); 
-    }        
+    }    
 }
 
