@@ -20,12 +20,6 @@ function addChar(){
         console.log(window.DB);
         console.log("added");
     }
-    //adding a pop up for when character created
-    var word = document.getElementById("pop-up");
-    if(word.innerHTML == " "){
-        word.innerHTML = newchar + ": Added to the Stage";
-    }
-    setTimeout(function() {document.getElementById('pop-up').innerHTML=" ";},2000);
 
     document.getElementById("newname").value = "";
 }
@@ -57,13 +51,6 @@ function take_action(action){
     char_actions = document.getElementById(`${play_as} Actions`);
     var newAction = document.createElement('li')
     newAction.textContent = action.innerText;
-
-     //Pop up for action taken
-    var action_taken = document.getElementById("pop-up");
-    if(action_taken.innerHTML == " "){
-        action_taken.innerHTML = play_as + ": " + action.innerText;
-    }
-    setTimeout(function() {document.getElementById('pop-up').innerHTML=" ";},2000);
 
     if (char_actions.childNodes[0].innerText == "No Actions Taken") {
         char_actions.removeChild(char_actions.childNodes[0]);
