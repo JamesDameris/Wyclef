@@ -105,4 +105,4 @@ window.character = {
     MyCharacter
 };
 
-// module.exports = {character}
+// module.exports = {MyCharacter}

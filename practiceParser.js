@@ -117,10 +117,10 @@ function removeSentences (sentences) {
     }
 }
 
-let adrienne = new C.character("Adrienne");
+let adrienne = new C.MyCharacter("Adrienne");
 
 adrienne.printInfo();
-let joe = new C.character("Joe");
-let morgan = new C.character("morgan");
+let joe = new C.MyCharacter("Joe");
+let morgan = new C.MyCharacter("morgan");
 joe.printInfo();
 

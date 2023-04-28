@@ -1,18 +1,18 @@
-const DB = require("./logicDB.js");
+// const DB = rEQuire("./logicDB.js");
 
 /// Test basic DB functionality. Does insertion, querying, and deletion work?
 
-function dbBaseTest() {
-  DB.insert("foo.bar.baz");
-  DB.insert("foo.bar.woof");
-  DB.insert("foo.meow.woof");
-  DB.insert("fizz.buzz.foo");
-  DB.insert("some.other.woof");
-  //console.log(dbToSentences(DB));
-  console.log(unifyAll(["X.Y.woof", "fizz.buzz.X"]));
-  DB.remove("foo.bar");
-  //console.log(dbToSentences(DB));
-}
+// function dbBaseTest() {
+//   DB.insert("foo.bar.baz");
+//   DB.insert("foo.bar.woof");
+//   DB.insert("foo.meow.woof");
+//   DB.insert("fizz.buzz.foo");
+//   DB.insert("some.other.woof");
+//   //console.log(dbToSentences(DB));
+//   console.log(unifyAll(["X.Y.woof", "fizz.buzz.X"]));
+//   DB.remove("foo.bar");
+//   //console.log(dbToSentences(DB));
+// }
 
 
 
@@ -26,8 +26,8 @@ const greetPractice = {
     {
       name: "[Actor]: Greet [Other]",
       conditions: [
-        "eq Actor Greeter",
-        "eq Other Greeted"
+        "EQ Actor Greeter",
+        "EQ Other Greeted"
       ],
       outcomes: [
         //"insert practice.respondToGreeting.Other.Actor",
@@ -53,8 +53,8 @@ const tendBarPractice = {
     {
       name: "[Actor]: Walk up to bar",
       conditions: [
-        "neq Actor Bartender",
-        "not practice.tendBar.Bartender.customer.Actor"
+        "NEQ Actor Bartender",
+        "NOT practice.tendBar.Bartender.customer.Actor"
       ],
       outcomes: [
         "insert practice.tendBar.Bartender.customer.Actor"
@@ -73,7 +73,7 @@ const tendBarPractice = {
       name: "[Actor]: Order [Beverage]",
       conditions: [
         "practice.tendBar.Bartender.customer.Actor",
-        "not practice.tendBar.Bartender.customer.Actor!beverage",
+        "NOT practice.tendBar.Bartender.customer.Actor!beverage",
         "practiceData.tendBar.beverageType.Beverage"
       ],
       outcomes: [
@@ -84,7 +84,7 @@ const tendBarPractice = {
     {
       name: "[Actor]: Fulfill [Customer]'s order",
       conditions: [
-        "eq Actor Bartender",
+        "EQ Actor Bartender",
         "practice.tendBar.Bartender.customer.Customer!order!Beverage"
       ],
       outcomes: [
@@ -179,7 +179,7 @@ const ticTacToePractice = {
         "practice.ticTacToe.Player1.Player2.player.Winner.piece!Piece",
         // Grab the loser so we can mark them as having lost
         "practice.ticTacToe.Player1.Player2.player.Loser",
-        "neq Winner Loser"
+        "NEQ Winner Loser"
       ],
       outcomes: [
         "insert Winner.ship.Loser.ticTacToeMemory!won",
@@ -196,7 +196,7 @@ const ticTacToePractice = {
         "practice.ticTacToe.Player1.Player2.player.Winner.piece!Piece",
         // Grab the loser so we can mark them as having lost
         "practice.ticTacToe.Player1.Player2.player.Loser",
-        "neq Winner Loser"
+        "NEQ Winner Loser"
       ],
       outcomes: [
         "insert Winner.ship.Loser.ticTacToeMemory!won",
@@ -213,7 +213,7 @@ const ticTacToePractice = {
         "practice.ticTacToe.Player1.Player2.player.Winner.piece!Piece",
         // Grab the loser so we can mark them as having lost
         "practice.ticTacToe.Player1.Player2.player.Loser",
-        "neq Winner Loser"
+        "NEQ Winner Loser"
       ],
       outcomes: [
         "insert Winner.ship.Loser.ticTacToeMemory!won",
@@ -230,7 +230,7 @@ const ticTacToePractice = {
         "practice.ticTacToe.Player1.Player2.player.Winner.piece!Piece",
         // Grab the loser so we can mark them as having lost
         "practice.ticTacToe.Player1.Player2.player.Loser",
-        "neq Winner Loser"
+        "NEQ Winner Loser"
       ],
       outcomes: [
         "insert Winner.ship.Loser.ticTacToeMemory!won",
@@ -260,10 +260,10 @@ const ticTacToePractice = {
         // (two corners per tie-game action)
         "practice.ticTacToe.Player1.Player2.board.top.left!P1",
         "practice.ticTacToe.Player1.Player2.board.middle.center!P2",
-        "neq P1 P2", "neq P1 empty", "neq P2 empty",
+        "NEQ P1 P2", "NEQ P1 empty", "NEQ P2 empty",
         "practice.ticTacToe.Player1.Player2.board.top.right!P3",
         "practice.ticTacToe.Player1.Player2.board.middle.center!P4",
-        "neq P3 P4", "neq P3 empty", "neq P4 empty",
+        "NEQ P3 P4", "NEQ P3 empty", "NEQ P4 empty",
       ],
       outcomes: [
         "insert Player1.ship.Player2.ticTacToeMemory!tied",
@@ -292,10 +292,10 @@ const ticTacToePractice = {
         // (two corners per tie-game action)
         "practice.ticTacToe.Player1.Player2.board.top.right!P1",
         "practice.ticTacToe.Player1.Player2.board.middle.center!P2",
-        "neq P1 P2", "neq P1 empty", "neq P2 empty",
+        "NEQ P1 P2", "NEQ P1 empty", "NEQ P2 empty",
         "practice.ticTacToe.Player1.Player2.board.bottom.right!P3",
         "practice.ticTacToe.Player1.Player2.board.middle.center!P4",
-        "neq P3 P4", "neq P3 empty", "neq P4 empty",
+        "NEQ P3 P4", "NEQ P3 empty", "NEQ P4 empty",
       ],
       outcomes: [
         "insert Player1.ship.Player2.ticTacToeMemory!tied",
@@ -324,10 +324,10 @@ const ticTacToePractice = {
         // (two corners per tie-game action)
         "practice.ticTacToe.Player1.Player2.board.bottom.right!P1",
         "practice.ticTacToe.Player1.Player2.board.middle.center!P2",
-        "neq P1 P2", "neq P1 empty", "neq P2 empty",
+        "NEQ P1 P2", "NEQ P1 empty", "NEQ P2 empty",
         "practice.ticTacToe.Player1.Player2.board.bottom.left!P3",
         "practice.ticTacToe.Player1.Player2.board.middle.center!P4",
-        "neq P3 P4", "neq P3 empty", "neq P4 empty",
+        "NEQ P3 P4", "NEQ P3 empty", "NEQ P4 empty",
       ],
       outcomes: [
         "insert Player1.ship.Player2.ticTacToeMemory!tied",
@@ -356,10 +356,10 @@ const ticTacToePractice = {
         // (two corners per tie-game action)
         "practice.ticTacToe.Player1.Player2.board.bottom.left!P1",
         "practice.ticTacToe.Player1.Player2.board.middle.center!P2",
-        "neq P1 P2", "neq P1 empty", "neq P2 empty",
+        "NEQ P1 P2", "NEQ P1 empty", "NEQ P2 empty",
         "practice.ticTacToe.Player1.Player2.board.top.left!P3",
         "practice.ticTacToe.Player1.Player2.board.middle.center!P4",
-        "neq P3 P4", "neq P3 empty", "neq P4 empty",
+        "NEQ P3 P4", "NEQ P3 empty", "NEQ P4 empty",
       ],
       outcomes: [
         "insert Player1.ship.Player2.ticTacToeMemory!tied",
@@ -375,9 +375,9 @@ const ticTacToePractice = {
 // - knowitalls
 // - darthVader
 
-const coffee = { 
+const coffeePractice = { 
   id: "coffee",
-  name: "[barista] serving beverages",
+  name: "[Barista] serving beverages",
   data: [
     "beverageType.cappucino!coffee",
     "beverageType.latte!coffee",
@@ -387,13 +387,13 @@ const coffee = {
     "beverageType.americano!coffee",
     "beverageType.hottea!notcoffee"
   ],
-  roles: ["barista"],
+  roles: ["Barista"],
   actions: [
     {
       name: "[Actor]: Walk up to counter",
       conditions: [
-        "neq Actor Barista",
-        "not practice.coffee.Barista.customer.Actor"
+        "NEQ Actor Barista",
+        "NOT practice.coffee.Barista.customer.Actor"
       ],
       outcomes: [
         "insert practice.coffee.Barista.customer.Actor"
@@ -412,7 +412,7 @@ const coffee = {
       name: "[Actor]: Order [Beverage]",
       conditions: [
         "practice.coffee.Barista.customer.Actor",
-        "not practice.coffee.Barista.customer.Actor!beverage",
+        "NOT practice.coffee.Barista.customer.Actor!beverage",
         "practiceData.coffee.beverageType.Beverage"
       ],
       outcomes: [
@@ -423,7 +423,7 @@ const coffee = {
     {
       name: "[Actor]: Fulfill [Customer]'s order",
       conditions: [
-        "eq Actor Barista",
+        "EQ Actor Barista",
         "practice.coffee.Barista.customer.Customer!order!Beverage"
       ],
       outcomes: [
@@ -469,30 +469,36 @@ const coffee = {
 
 
 
+window.practiceDefs = [greetPractice /*, tendBarPractice,/* coffeePractice , ticTacToePractice */ ];
+
+
+
+
+
 /// Test Praxish: initialize a `testPraxishState`,
 /// yeet a practice instance in there, and start ticking.
 
-function doTicks(praxishState, n) {
-  for (let i = 0; i < n; i++) {
-    tick(praxishState);
-  }
-}
+// function doTicks(praxishState, n) {
+//   for (let i = 0; i < n; i++) {
+//     tick(praxishState);
+//   }
+// }
 
-const testPraxishState = createPraxishState();
-testPraxishState.allChars = ["max", "nic", "isaac"];
-// First test with just the `greet` practice
-console.log("PRACTICE TEST: greet");
-definePractice(testPraxishState, greetPractice);
-performOutcome(testPraxishState, "insert practice.greet.max.isaac");
-performOutcome(testPraxishState, "insert practice.greet.nic.max");
-doTicks(testPraxishState, 3);
-// Then introduce and test with the `tendBar` practice
-console.log("PRACTICE TEST: tendBar");
-definePractice(testPraxishState, tendBarPractice);
-performOutcome(testPraxishState, "insert practice.tendBar.isaac");
-doTicks(testPraxishState, 12);
-// And now test `ticTacToe` concurrently with the bar practice
-console.log("PRACTICE TEST: ticTacToe");
-definePractice(testPraxishState, ticTacToePractice);
-performOutcome(testPraxishState, "insert practice.ticTacToe.max.nic");
-doTicks(testPraxishState, 24);
+// const testPraxishState = createPraxishState();
+// testPraxishState.allChars = ["max", "nic", "isaac"];
+// // First test with just the `greet` practice
+// console.log("PRACTICE TEST: greet");
+// definePractice(testPraxishState, greetPractice);
+// performOutcome(testPraxishState, "insert practice.greet.max.isaac");
+// performOutcome(testPraxishState, "insert practice.greet.nic.max");
+// doTicks(testPraxishState, 3);
+// // Then introduce and test with the `tendBar` practice
+// console.log("PRACTICE TEST: tendBar");
+// definePractice(testPraxishState, tendBarPractice);
+// performOutcome(testPraxishState, "insert practice.tendBar.isaac");
+// doTicks(testPraxishState, 12);
+// // And now test `ticTacToe` concurrently with the bar practice
+// console.log("PRACTICE TEST: ticTacToe");
+// definePractice(testPraxishState, ticTacToePractice);
+// performOutcome(testPraxishState, "insert practice.ticTacToe.max.nic");
+// doTicks(testPraxishState, 24);

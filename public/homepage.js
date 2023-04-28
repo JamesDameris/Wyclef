@@ -1,10 +1,67 @@
-// import * as db from "./logicDB.js" 
 var play_as;
 var current_id = 0;
-var actionsto_take = ["Order a beverage", "Drink your beverage", "Ask 'How 'bout the weather?'", "Critique other's beverage choice", "Talk about job", "Ask about hobby", "Spill beverage"];
+// var actions_to_take = ["Order a beverage", "Drink your beverage", "Ask 'How 'bout the weather?'", "Critique other's beverage choice", "Talk about job", "Ask about hobby", "Spill beverage"];
 var character_list = new Array();
 var info = {};
 var charnum = 0;
+var practices_active = [];
+
+function getAllActions() { // Possible Actions for each time a character has a turn
+    let actions = []; 
+    for (let practice of window.practiceDefs) {
+        PracInstances = window.unorderedQuery([`practice.${practice.id}.${practice.roles.join('.')}`]);
+        for (let inst of PracInstances) {
+            for (let action of practice.actions) {
+                // set Role bindings
+                let actorBinding = `EQ Actor ${play_as.toLowerCase()}`;
+                let roleBindings = Object.entries(inst).map(i => `EQ ${i[0]} ${i[1]}`);
+                let initialBindings = [actorBinding,...roleBindings];
+                let bindingSets = window.unorderedQuery(initialBindings.concat(action.conditions));
+                console.log("Binding:",bindingSets);
+                for (let bs of bindingSets) {
+                    let formattedName = action.name;
+                    for (In of Object.entries(bs)) {
+                        formattedName = formattedName.replaceAll(`[${In[0]}]`,In[1]);
+                    }
+                    bs["practice"] = practice.id;
+                    bs["action"] = formattedName;    
+                    bs["outcomes"] = action.outcomes;
+                    actions.push(bs);
+                }
+            }
+        }
+    }
+    
+    return actions;
+}
+
+function initPracticesSelected() {
+    // let initializers = [];
+    for (let practice of window.practiceDefs) { 
+        if (practice.roles.length > 1) {
+            for (let char of character_list) {
+                if (char == play_as) { continue; }
+                window.insert(`practice.${practice.id}.${play_as.toLowerCase()}.${char.toLowerCase()}`);
+            }
+        } else {
+            window.insert(`practice.${practice.id}.${play_as.toLowerCase()}`);
+        }
+        let pracData = practice.data ? practice.data : null;
+        if (pracData) {
+            var theData = pracData.map(pd => "practiceData."+practice.id+"."+pd); // set up the data for the query 
+            for (let d of theData) {
+                window.insert(d);
+            }
+        }
+        if (practice.init) {
+            for (let i of practice.init) {
+                let iSent = i.split(" ");
+                window.insert(initial[1]);
+            }
+        }
+    } 
+}
+
 
 
 function addChar(){
@@ -13,69 +70,88 @@ function addChar(){
         newcharClass = new window.character.MyCharacter(newchar);
         character_list.push(newchar);
         info[newchar] = [JSON.stringify(newcharClass)];
-        console.log(newchar," ",newcharClass);
-        display();
+
+        let direction = ['stage left', 'stage right', 'center stage'];
+        let ranNum = Math.trunc(Math.random()*3);
+        let dir = direction[ranNum];
+        let textToShow = `has entered from ${dir}`;
+
+        display(textToShow, newchar);
         charnum++;
-        window.insert(`characters.${newchar.toLowerCase()}`, character);
-        console.log(window.DB);
-        console.log("added");
+        window.insert(`characters.${newchar.toLowerCase()}`);
     }
     document.getElementById("newname").value = "";
 }
 function doneWCharac(){
     play_as = character_list[0];
     document.getElementById("left-section").removeChild(document.getElementById("start"));
-    var done = document.createElement("h1");
-    done.id = 'my-char';
-    done.innerText = "Playing as: " + play_as;
-    done.classList.add('fade-in-scene');
-    document.getElementById("left-section").appendChild(done);
-    actionButtons();
-    console.log(character_list);
+    // var done = document.createElement("h1");
+    // done.id = 'my-char';
+    // done.innerText = "Playing as: " + play_as;
+    // done.classList.add('fade-in-scene');
+    var charList = document.createElement("ul");
+    charList.id = 'char-list';
+    charList.style.display = "flex";
+    charList.style.listStyle = "none";
+    charList.style.position = "relative";
+    charList.style.justifyContent = "space-around";
+    charList.style.padding = "0px";
+    charList.style.bottom = "-500px";
+    charList.classList.add('fade-in-scene');
+    for (let charIt of character_list) {
+        let charI = document.createElement("p");
+        charI.id = charIt;
+        charI.style.marginRight = "10px";
+        charI.style.fontSize = "150%";
+        charI.innerText = charIt;
+        if (charIt == character_list[0]) { charI.style.fontWeight = "bold"; }
+        charList.appendChild(charI);
+    }
+    // document.getElementById("left-section").appendChild(done);
+    document.getElementById("left-section").appendChild(charList);
+    initPracticesSelected();
+    possibleActions();
 }
-function actionButtons(){
-    for(var i = 0; i<actionsto_take.length; i++){
+function possibleActions(){
+    let posActs = getAllActions();
+    console.log("Possible Actions:",posActs);
+
+    for(var i = 0; i<posActs.length; i++){
         var button = document.createElement("button");
-        var action = document.createTextNode(actionsto_take[i]);
-        action.id = `${actionsto_take[i]}`;
+        var action = document.createTextNode(posActs[i].action);
+        action.id = posActs.action;
         button.appendChild(action);
+        let tempInst = posActs[i]
         button.onclick = function(event){
-            var action_totake = event.target;
-            take_action(action_totake);
+            var action_to_take = event.target;
+            take_action(action_to_take, tempInst);
         };
         document.getElementById("actions").appendChild(button);
     }
 }
-function take_action(action){
+function take_action(eventTarget, instance) {
     // add so that on action taken, add to character list action
-    char_actions = document.getElementById(`${play_as} Actions`);
-    var newAction = document.createElement('li')
-    newAction.textContent = action.innerText;
-    
-    if (char_actions.childNodes[0].innerText == "No Actions Taken") {
-        char_actions.removeChild(char_actions.childNodes[0]);
-    }
-    char_actions.appendChild(newAction);
-    document.getElementById("actions").removeChild(action); // use query
+    console.log(instance);
+    display(instance.action, play_as);
+   
+    document.getElementById("actions").removeChild(eventTarget); // use query
     current_id = current_id + 1;
     play_as = character_list[current_id%charnum];
-    document.getElementById('my-char').innerText = "Playing as: " + play_as;
+    // document.getElementById('my-char').innerText = "Playing as: " + play_as; // replace with bolding the next character to perform an action
 }
 
-function display(){ // change to be on each action (when character is added, say "Character: Added to the Stage (maybe even stage direction)", When action taken say "Character: Took said action")
-
-    var charItem = document.createElement('li');
+function display(textToShow, charac){ // change to be on each action (when character is added, say "Character: Added to the Stage (maybe even stage direction)", When action taken say "Character: Took said action")
+    
+    var charItem = document.createElement('p');
     charItem.id = 'char';
-    charItem.classList.add('fade-in');
-    var def = document.createElement('li');
-    def.innerText = "No Actions Taken";
-    for (let char of Object.keys(info)) {
-        charItem.innerHTML = `<i><b style='font-size: 150%;'>${char}<b><i>`;
-        var charList = document.createElement('ul');
-        charList.id = `${char} Actions`;
-        charList.appendChild(def);
-        charItem.appendChild(charList);
-        document.getElementById('character-list').appendChild(charItem); 
-    }    
+    charItem.classList.add('typewriter');
+    var def = document.createElement('p');
+    
+    def.innerText = textToShow;
+
+    charItem.innerHTML = `<i><b style='font-size: 150%;'>${charac}<b><i>`;
+    charItem.appendChild(def);
+    document.getElementById('script').appendChild(charItem); 
+
 }
 

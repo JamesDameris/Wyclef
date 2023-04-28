@@ -7,6 +7,7 @@
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: space-evenly;
+            background-color: white;
         }
         #left-section {
             width: 45%;
@@ -49,7 +50,7 @@
         }
         .sidebar{
             height: 700px;
-            overflow-y: scroll; /* add js to focus the bottom of the scroll */
+            overflow-y: auto;
             padding: 10px;
         }
         .actions{
@@ -71,10 +72,27 @@
             color: white;
         }
 
-        @keyframes fade-in {
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+                
+            }
+        }
+
+        .typewriter {
+            overflow: hidden; 
+            margin: 0 auto; 
+            letter-spacing: .15em;
+            animation: typing 2.5s steps(40, end);
+        }
+
+        @keyframes fade-in-scene {
             from {
                 opacity: 0;
-                transform: translateX(-50%);
+                transform: translateX(100%);
             }
             to {
                 opacity: 1;
@@ -82,22 +100,8 @@
             }
         }
 
-        .fade-in {
-            animation: fade-in 1.5s ease-in-out;
-        }
-
-        @keyframes fade-in-scene {
-            from {
-                opacity: 0;
-                transform: translateY(1000%);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0%);
-            }
-        }
-
         .fade-in-scene {
+            overflow: hidden;
             animation: fade-in-scene 1.5s ease-in-out;
         }
 
@@ -107,7 +111,7 @@
     <div id="left-section">
         <div id="start">
             <h1>Welcome to Wyclef!</h1>
-            <label for="newname">Insert character names:</label>
+            <label for="newname">Insert character name:</label>
             <input type="text" id="newname" onfocus="this.value=''">
             <br><br>
             <button onclick="addChar()">Add Character</button>
@@ -123,12 +127,14 @@
     </div>
     <div id="right-section">
         <div class="sidebar">
-            <h1>Actions taken by:</h1>
-            <div id="character-list"></div>
+            <h1>The Script:</h1>
+            <div id="script"></div>
         </div>
     </div>
     <script src="./characters.js"></script>
     <script src="./logicDB.js"></script>
+    <script src="./testCases.js"></script>
     <script src="./homepage.js"></script>
+    
 </body>
 </html>
