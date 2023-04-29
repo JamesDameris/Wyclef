@@ -152,7 +152,7 @@ function unorderedQuery(statements) {
             let iterativeBindings = [];
             for (let uni of possibleBindings) {
                 if ((NEQStatement[1] in uni) && (NEQStatement[2] in uni) ) { // If both arguments are bound variables or constants, we compare their values and discard the uni if they're equal.
-                    console.log("Winner:", uni[NEQStatement[1]], "Loser:", uni[NEQStatement[2]]);
+                    //console.log("Winner:", uni[NEQStatement[1]], "Loser:", uni[NEQStatement[2]]);
                     if (uni[NEQStatement[1]] == uni[NEQStatement[2]]) {
                         continue; // if equal, discard the uni
                     } else {

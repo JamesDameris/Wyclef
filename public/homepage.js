@@ -53,10 +53,10 @@ function initPracticesSelected() {
                 window.insert(d);
             }
         }
-        if (practice.init) {
+        if (practice.init) { // specifically here, do practice instances
             for (let i of practice.init) {
                 let iSent = i.split(" ");
-                window.insert(initial[1]);
+                window.insert(iSent[1]);
             }
         }
     } 
@@ -129,7 +129,7 @@ function possibleActions(){
         document.getElementById("actions").appendChild(button);
     }
 }
-function take_action(eventTarget, instance) {
+function take_action(eventTarget, instance) { // also perform the outcomes !!!! TODO
     // add so that on action taken, add to character list action
     console.log(instance);
     display(instance.action, play_as);
@@ -146,12 +146,13 @@ function display(textToShow, charac){ // change to be on each action (when chara
     charItem.id = 'char';
     charItem.classList.add('typewriter');
     var def = document.createElement('p');
-    
+
     def.innerText = textToShow;
 
     charItem.innerHTML = `<i><b style='font-size: 150%;'>${charac}<b><i>`;
     charItem.appendChild(def);
     document.getElementById('script').appendChild(charItem); 
+    def.scrollIntoView();
 
 }
 

@@ -469,7 +469,7 @@ const coffeePractice = {
 
 
 
-window.practiceDefs = [greetPractice /*, tendBarPractice,/* coffeePractice , ticTacToePractice */ ];
+window.practiceDefs = [greetPractice , tendBarPractice,/* coffeePractice , ticTacToePractice */ ];
 
 
 
