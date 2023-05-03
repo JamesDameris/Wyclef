@@ -9,18 +9,17 @@ var practices_active = [];
 function getAllActions() { // Possible Actions for each time a character has a turn
     let actions = []; 
     for (let practice of window.practiceDefs) {
-        PracInstances = window.unorderedQuery([`practice.${practice.id}.${practice.roles.join('.')}`]);
+        let PracInstances = window.unorderedQuery([`practice.${practice.id}.${practice.roles.join('.')}`]);
         for (let inst of PracInstances) {
-            for (let action of practice.actions) {
+            for (let action of practice.actions) { 
                 // set Role bindings
                 let actorBinding = `EQ Actor ${play_as.toLowerCase()}`;
                 let roleBindings = Object.entries(inst).map(i => `EQ ${i[0]} ${i[1]}`);
                 let initialBindings = [actorBinding,...roleBindings];
-                let bindingSets = window.unorderedQuery(initialBindings.concat(action.conditions));
-                console.log("Binding:",bindingSets);
+                let bindingSets = window.unorderedQuery(initialBindings.concat(action.conditions));     
                 for (let bs of bindingSets) {
                     let formattedName = action.name;
-                    for (In of Object.entries(bs)) {
+                    for (let In of Object.entries(bs)) {
                         formattedName = formattedName.replaceAll(`[${In[0]}]`,In[1]);
                     }
                     bs["practice"] = practice.id;
@@ -35,31 +34,35 @@ function getAllActions() { // Possible Actions for each time a character has a t
     return actions;
 }
 
-function initPracticesSelected() {
+function initPracticesSelected() { // initialize all characters at beginning (for example only let one person be bartender)
     // let initializers = [];
-    for (let practice of window.practiceDefs) { 
-        if (practice.roles.length > 1) {
-            for (let char of character_list) {
-                if (char == play_as) { continue; }
-                window.insert(`practice.${practice.id}.${play_as.toLowerCase()}.${char.toLowerCase()}`);
+    for (let ch of character_list) {
+        for (let practice of window.practiceDefs) { 
+            if (practice.roles.length > 1) {
+                for (let char of character_list) {
+                    if (char == ch) { continue; }
+                    window.insert(`practice.${practice.id}.${ch.toLowerCase()}.${char.toLowerCase()}`);
+                }
+            } else {
+                if (ch == play_as) { 
+                    window.insert(`practice.${practice.id}.${ch.toLowerCase()}`); 
+                }
             }
-        } else {
-            window.insert(`practice.${practice.id}.${play_as.toLowerCase()}`);
-        }
-        let pracData = practice.data ? practice.data : null;
-        if (pracData) {
-            var theData = pracData.map(pd => "practiceData."+practice.id+"."+pd); // set up the data for the query 
-            for (let d of theData) {
-                window.insert(d);
+            let pracData = practice.data ? practice.data : null;
+            if (pracData) {
+                var theData = pracData.map(pd => "practiceData."+practice.id+"."+pd); // set up the data for the query 
+                for (let d of theData) {
+                    window.insert(d);
+                }
             }
-        }
-        if (practice.init) { // specifically here, do practice instances
-            for (let i of practice.init) {
-                let iSent = i.split(" ");
-                window.insert(iSent[1]);
+            if (practice.init) { // specifically here, do practice instances
+                for (let i of practice.init) {
+                    let iSent = i.split(" ");
+                    window.insert(iSent[1]);
+                }
             }
-        }
-    } 
+        } 
+    }
 }
 
 
@@ -91,12 +94,13 @@ function doneWCharac(){
     // done.classList.add('fade-in-scene');
     var charList = document.createElement("ul");
     charList.id = 'char-list';
-    charList.style.display = "flex";
+    charList.style.display = "flex"
+    charList.style.textAlign = "center";
     charList.style.listStyle = "none";
     charList.style.position = "relative";
     charList.style.justifyContent = "space-around";
     charList.style.padding = "0px";
-    charList.style.bottom = "-500px";
+    charList.style.bottom = "0px";
     charList.classList.add('fade-in-scene');
     for (let charIt of character_list) {
         let charI = document.createElement("p");
@@ -115,7 +119,7 @@ function doneWCharac(){
 function possibleActions(){
     let posActs = getAllActions();
     console.log("Possible Actions:",posActs);
-
+    document.getElementById("actions").innerHTML = "";
     for(var i = 0; i<posActs.length; i++){
         var button = document.createElement("button");
         var action = document.createTextNode(posActs[i].action);
@@ -126,7 +130,8 @@ function possibleActions(){
             var action_to_take = event.target;
             take_action(action_to_take, tempInst);
         };
-        document.getElementById("actions").appendChild(button);
+        let act = document.getElementById("actions");
+        act.appendChild(button);
     }
 }
 function take_action(eventTarget, instance) { // also perform the outcomes !!!! TODO
@@ -135,16 +140,42 @@ function take_action(eventTarget, instance) { // also perform the outcomes !!!! 
     display(instance.action, play_as);
    
     document.getElementById("actions").removeChild(eventTarget); // use query
-    current_id = current_id + 1;
-    play_as = character_list[current_id%charnum];
-    // document.getElementById('my-char').innerText = "Playing as: " + play_as; // replace with bolding the next character to perform an action
+    for (out of instance.outcomes) {
+        let o = out.split(" ");
+        let formattedEntry = o[1];
+        console.log("Original", formattedEntry);
+        for (let In of Object.entries(instance)) {
+            if (In[0] == "practice" || In[0] == "action" || In[0] == "outcomes") { continue; }
+            formattedEntry = formattedEntry.replaceAll(In[0],In[1]);
+        }
+        if (o[0] == "delete") {
+            console.log("Deleting:", formattedEntry);
+            window.remove(formattedEntry);
+        } else if (o[0] == "insert") {
+            console.log("Inserting:", formattedEntry);
+            window.insert(formattedEntry);
+        }
+    }
+    // document.getElementById('char-list').innerText = "Playing as: " + play_as; // replace with bolding the next character to perform an action
+    let charList = document.getElementById('char-list');
+    for (let ch of charList.children) {
+        if (ch.innerText == character_list[current_id+1]) {
+            ch.style.fontWeight = "bold";
+        } else if (ch.innerText == character_list[current_id]) {
+            ch.style.fontWeight = "normal";
+        }
+    } 
+    current_id = (current_id + 1) % charnum;
+    play_as = character_list[current_id];
+    // initPracticesSelected();
+    possibleActions();
 }
 
 function display(textToShow, charac){ // change to be on each action (when character is added, say "Character: Added to the Stage (maybe even stage direction)", When action taken say "Character: Took said action")
     
     var charItem = document.createElement('p');
     charItem.id = 'char';
-    charItem.classList.add('typewriter');
+    charItem.classList.add('fade-in-scene');
     var def = document.createElement('p');
 
     def.innerText = textToShow;
