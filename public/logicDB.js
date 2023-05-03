@@ -125,6 +125,79 @@ function unorderedQuery(statements) {
                 concreteVal1 = isVar1 ? uni[EQStatement[1]] : EQStatement[1];
                 concreteVal2 = isVar2 ? uni[EQStatement[2]] : EQStatement[2];
                 if (concreteVal1 && concreteVal2) { // If both arguments are bound variables or constants, we compare their values and discard the uni if they're not equal.
+                    if (concreteVal1 == concreteVal2) {
+                        iterativeBindings.push(uni); 
+                    }
+                } else if (concreteVal1 && !concreteVal2) { // If one of the two arguments is an unbound variable and one of them is a bound variable or constant, we establish a new binding for the unbound variable so that it's now bound to the same thing as the other argument.
+                    let nextUni = clone(uni);
+                    nextUni[EQStatement[2]] = concreteVal1;
+                    iterativeBindings.push(nextUni);
+                    
+                } else if (!concreteVal1 && concreteVal2) { // inverse case
+                    let nextUni = clone(uni);
+                    nextUni[EQStatement[1]] = concreteVal2;
+                    iterativeBindings.push(nextUni);
+                
+                } else { // If both arguments are unbound variables, that's an error case – we can print an error message to warn the user that they've done something invalid.
+                    console.log("Error: Neither arguments bound");
+                }
+                possibleBindings = iterativeBindings;
+            }
+        
+        } else if (statements[i].split(" ")[0] == "NEQ") { // NEQ is basically a combination of the NOT and EQ logic, but it doesn't ever add any new bindings (since the user should only specify arguments that are either constants or previously-bound variables to compare – you can't compare the value of an unbound variable to anything, since it doesn't have one).
+            NEQStatement = statements[i].split(" ");
+            console.log("Checking Unequality on:", NEQStatement[1], "and", NEQStatement[2]);
+            let iterativeBindings = [];
+            for (let uni of possibleBindings) {
+                if ((NEQStatement[1] in uni) && (NEQStatement[2] in uni) ) { // If both arguments are bound variables or constants, we compare their values and discard the uni if they're equal.
+                    //console.log("Winner:", uni[NEQStatement[1]], "Loser:", uni[NEQStatement[2]]);
+                    if (uni[NEQStatement[1]] != uni[NEQStatement[2]]) {
+                        iterativeBindings.push(uni); 
+                    }
+                } else {
+                    // If either argument is unbound variables, that's an error case – we can print an error message to warn the user that they've done something invalid.
+                    console.log("Error:", (NEQStatement[1] in uni) ? NEQStatement[1] + " bound" : NEQStatement[1] + " unbound", (NEQStatement[2] in uni) ? NEQStatement[2] + " bound" : NEQStatement[2] + " unbound");
+                    iterativeBindings.push(uni); 
+                }
+                possibleBindings = iterativeBindings;
+            }
+        } else if (statements[i].split(" ")[0] == "NOT") {
+            // NOT basically drops every uni in possibleBindings for which the operator sentence successfully unifies with the previously bound values (and keeps the rest)
+            let iterativeBindings = [];
+            console.log("Checking Not on setence:",statements[i].split(" ")[1]);
+            for (let uni of possibleBindings) {
+                let formattedName = statements[i].split(" ")[1];
+                    for (let In of Object.entries(uni)) {
+                        formattedName = formattedName.replaceAll(In[0],In[1]);
+                    }
+                let newBinding = unify(formattedName);
+                if (newBinding.length == 0) {
+                    iterativeBindings.push(uni);
+                }
+            }
+            possibleBindings = iterativeBindings;
+        } else {
+            continue;
+        }
+    }
+    return possibleBindings; 
+}
+
+
+function orderedQuery(statements) {
+    console.log("Querying: " + statements);
+    let possibleBindings = [ {} ];
+    for (let i = 0; i < statements.length; i++) {
+        if (statements[i].split(" ")[0] == "EQ") {
+            EQStatement = statements[i].split(" ");
+            let isVar1 = isUppercase(EQStatement[1][0]);
+            let isVar2 = isUppercase(EQStatement[2][0]);
+            console.log("Checking Equality on:", EQStatement[1], "and", EQStatement[2]);
+            let iterativeBindings = [];
+            for (let uni of possibleBindings) {
+                concreteVal1 = isVar1 ? uni[EQStatement[1]] : EQStatement[1];
+                concreteVal2 = isVar2 ? uni[EQStatement[2]] : EQStatement[2];
+                if (concreteVal1 && concreteVal2) { // If both arguments are bound variables or constants, we compare their values and discard the uni if they're not equal.
                     if (concreteVal1 != concreteVal2) {
                         continue; // if not equal, discard the uni
                     } else {
@@ -182,6 +255,28 @@ function unorderedQuery(statements) {
                     }
                 }
             }
+            possibleBindings = iterativeBindings;
+        } else if (statements[i].split(" ") <= 1) {
+            let parts = statements[i].split(" ");
+            let iterativeBindings = [];
+            let newBinding = unify(statements[i]);
+            for (let uni of possibleBindings) {
+                for (let binding of newBinding) {
+                    let newKeys = Object.keys(binding).filter(k=>!Object.keys(uni).includes(k)); // returns all the keys that are not in uni
+                    let oldKeys = Object.keys(binding).filter(k=>Object.keys(uni).includes(k)); //  returns all the keys that are in uni
+                    let thereExistsAnIncompatibileKey = oldKeys.some(k=>binding[k]!=uni[k]); // if there isnt at any key in binding that doesn't matches the same key in uni
+                    if (thereExistsAnIncompatibileKey) {
+                        continue;
+                    } else {
+                        let nextUni = clone(uni); // clone the current compatible bindings 
+                        for (newKey of newKeys) { // and add the new compatible bindings to the set of bindings
+                            nextUni[newKey] = binding[newKey];
+                        }
+                        iterativeBindings.push(nextUni); // then update iterativeBindings (which is reset to empty every unify)
+                    }
+                }
+            }
+            console.log("iterartive", iterativeBindings);
             possibleBindings = iterativeBindings;
         } else {
             continue;
