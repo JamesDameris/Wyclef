@@ -26,6 +26,7 @@ function getAllActions() { // Possible Actions for each time a character has a t
                     bs["action"] = formattedName;    
                     bs["outcomes"] = action.outcomes;
                     actions.push(bs);
+                    console.log("BSSS",bs);
                 }
             }
         }
@@ -133,6 +134,16 @@ function possibleActions(){
         let act = document.getElementById("actions");
         act.appendChild(button);
     }
+    var button = document.createElement("button");
+    var action = document.createTextNode("Do Nothing");
+    action.id = "Do Nothing";
+    button.appendChild(action);
+    let tempInst = {action: "Did Nothing", outcomes: ""};
+    button.onclick = function(event){
+        var action_to_take = event.target;
+        take_action(action_to_take, tempInst);
+    };
+    document.getElementById("actions").appendChild(button);
 }
 function take_action(eventTarget, instance) { // also perform the outcomes !!!! TODO
     // add so that on action taken, add to character list action
