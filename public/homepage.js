@@ -77,10 +77,5 @@ function display(){ // change to be on each action (when character is added, say
         charItem.appendChild(charList);
         document.getElementById('character-list').appendChild(charItem); 
     }  
-    //var element = document.getElementById('sidebar');
-    //element.scrollTop = element.scrollHeight; 
-    var topDiv = document.getElementById('sidebar').offsetTop;
-    var heightDiv = document.getElementById('sidebar').offsetHeight;
-    window.scrollTo({top:(topDiv+heightDiv)});
 }
 
