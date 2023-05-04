@@ -26,7 +26,6 @@ function getAllActions() { // Possible Actions for each time a character has a t
                     bs["action"] = formattedName;    
                     bs["outcomes"] = action.outcomes;
                     actions.push(bs);
-                    console.log("BSSS",bs);
                 }
             }
         }
@@ -56,10 +55,14 @@ function initPracticesSelected() { // initialize all characters at beginning (fo
                     window.insert(d);
                 }
             }
-            if (practice.init) { // specifically here, do practice instances
-                for (let i of practice.init) {
-                    let iSent = i.split(" ");
-                    window.insert(iSent[1]);
+            let PracInstances = window.unorderedQuery([`practice.${practice.id}.${practice.roles.join('.')}`]);
+            for (let inst of PracInstances) {
+                if (inst.init) { // specifically here, do practice instances
+                    for (let i of inst.init) {
+                        console.log("Inst",inst);
+                        let iSent = i.split(" ");
+                        window.insert(iSent[1]);
+                    }
                 }
             }
         } 

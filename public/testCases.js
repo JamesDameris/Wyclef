@@ -15,8 +15,109 @@
 // }
 
 
+// template for quickly making more test cases
+const template = {
+  id: "template",
+  name: "[Role] doing something",
+  data: ["optional list of static data regardless of practice instance"],
+  init: ["list of data specific to this practice instance to be initialized"],
+  roles: ["list of roles"], // must be start with uppercase for each role
+  actions: [
+    {
+      name: "[Actor]: Do something",
+      human_readable: "Does something (an actual sentence",
+      conditions: [
+        "list of conditions"
+      ],
+      outcomes: [
+        "list of outcomes"
+      ]
+    }
+  ]
+}
 
 /// Define some practices for testing Praxish proper.
+
+const spill = {
+  id: "spill",
+  name: "[Spiller] spills their drink",
+  /*init: "insert practice.spill.Spiller.beverageType",*/
+  roles: ["Spiller"],
+  actions: [
+    {
+      name: "[Actor]: teases [Spiller]",
+      human_readable: "Spiller, go home you're drunk.",
+      conditions: [
+        "NEQ Actor Spiller",
+        "EQ Actor Teaser"
+      ],
+      outcomes: [
+        "insert practice.spill.Spiller.angryat.Actor"
+      ]
+    },
+    {
+      name: "[Actor]: pick fight with [Teaser]",
+      human_readable: "Come at me Teaser, you're weak",
+      conditions: [
+        "NEQ Actor Teaser",
+        "practice.spill.Actor.angryat.Teaser"
+      ],
+      outcomes: [
+        "insert practice.fight.Actor.Teaser"
+      ]
+    },
+    {
+      name: "[Actor]: Cleans up spill caused by [Spiller]",
+      human_readable: "Cleans up Spiller's spilt drink",
+      conditions: [
+        "NEQ Actor Spiller"
+      ],
+      outcomes: [
+        "delete practice.spill.Spiller"
+      ]
+    },
+    {
+      name: "[Actor]: Cleans up their own spill ",
+      human_readable: "Cleans up their spilt drink",
+      conditions: [
+        "EQ Actor Spiller"
+      ],
+      outcomes: [
+        "delete practice.spill.Spiller"
+      ]
+    }
+  ] 
+}
+
+const fight = {
+  id: "fight",
+  name: "[Attacker] starts a bar fight with [Attacked]",
+  roles: ["Attacker,Attacked"], // must be start with uppercase for each role
+  actions: [
+    {
+      name: "[Actor]: Punches [Other]",
+      human_readable: "Swings at Other",
+      conditions: [
+        "NEQ Actor Other",
+        "NOT practice.fight.Attacker.Attacked.endurance.Other!weakened"
+      ],
+      outcomes: [
+        "insert practice.fight.Attacker.Attacked.endurance.Other!weakened"
+      ]
+    },
+    {
+      name: "[Actor]: Punches [Other]",
+      human_readable: "Swings at Other, knocking them out",
+      conditions: [
+        "NEQ Actor Other",
+        "practice.fight.Attacker.Attacked.endurance.Other!weakened"
+      ],
+      outcomes: [
+        "delete practice.fight.Attacker.Attacked"
+      ]
+    }
+  ]
+}
 
 const greetPractice = {
   id: "greet",
@@ -74,6 +175,7 @@ const tendBarPractice = {
       conditions: [
         "practice.tendBar.Bartender.customer.Actor",
         "NOT practice.tendBar.Bartender.customer.Actor!beverage",
+        "NOT practice.tendBar.Bartender.customer.Actor!order",
         "practiceData.tendBar.beverageType.Beverage"
       ],
       outcomes: [
@@ -469,7 +571,9 @@ const coffeePractice = {
 
 
 
-window.practiceDefs = [greetPractice , tendBarPractice,/* coffeePractice , ticTacToePractice */ ];
+window.practiceDefs = [greetPractice , tendBarPractice, /*, coffeePractice , ticTacToePractice */];
+
+window.practicesPossible = [spill, coffeePractice, ticTacToePractice, fight, tendBarPractice, greetPractice]
 
 
 
