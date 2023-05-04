@@ -111,7 +111,7 @@ function unorderedQuery(statements) {
                 }
             }
         }
-        console.log("iterartive", iterativeBindings);
+        // console.log("iterartive", iterativeBindings);
         possibleBindings = iterativeBindings;
     }
     for (let i = 0; i < statements.length; i++) {

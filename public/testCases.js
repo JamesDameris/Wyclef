@@ -60,6 +60,7 @@ const spill = {
       human_readable: "Come at me Teaser, you're weak",
       conditions: [
         "NEQ Actor Teaser",
+        "NOT practice.fight.Actor.Teaser",
         "practice.spill.Actor.angryat.Teaser"
       ],
       outcomes: [
@@ -70,16 +71,18 @@ const spill = {
       name: "[Actor]: Cleans up spill caused by [Spiller]",
       human_readable: "Cleans up Spiller's spilt drink",
       conditions: [
-        "NEQ Actor Spiller"
+        "NEQ Actor Spiller",     
+        "NOT practice.fight.Actor.Teaser"
       ],
       outcomes: [
         "delete practice.spill.Spiller"
       ]
     },
     {
-      name: "[Actor]: Cleans up their own spill ",
+      name: "[Actor]: Cleans up their own spill",
       human_readable: "Cleans up their spilt drink",
       conditions: [
+        "NOT practice.fight.Actor.Teaser",
         "EQ Actor Spiller"
       ],
       outcomes: [
@@ -92,25 +95,47 @@ const spill = {
 const fight = {
   id: "fight",
   name: "[Attacker] starts a bar fight with [Attacked]",
-  roles: ["Attacker,Attacked"], // must be start with uppercase for each role
+  roles: ["Attacker","Attacked"], // must be start with uppercase for each role
   actions: [
     {
-      name: "[Actor]: Punches [Other]",
-      human_readable: "Swings at Other",
+      name: "[Actor]: Punches [Attacked]",
+      human_readable: "Swings at Attacked",
       conditions: [
-        "NEQ Actor Other",
-        "NOT practice.fight.Attacker.Attacked.endurance.Other!weakened"
+        "EQ Actor Attacker",
+        "NOT practice.fight.Attacker.Attacked.endurance.Attacked!weakened"
       ],
       outcomes: [
-        "insert practice.fight.Attacker.Attacked.endurance.Other!weakened"
+        "insert practice.fight.Attacker.Attacked.endurance.Attacked!weakened"
       ]
     },
     {
-      name: "[Actor]: Punches [Other]",
-      human_readable: "Swings at Other, knocking them out",
+      name: "[Actor]: Punches [Attacked]",
+      human_readable: "Swings at Attacked, knocking them out",
       conditions: [
-        "NEQ Actor Other",
-        "practice.fight.Attacker.Attacked.endurance.Other!weakened"
+        "EQ Actor Attacker",
+        "practice.fight.Attacker.Attacked.endurance.Attacked!weakened"
+      ],
+      outcomes: [
+        "delete practice.fight.Attacker.Attacked"
+      ]
+    },
+    {
+      name: "[Actor]: Punches [Attacker]",
+      human_readable: "Swings at Attacker",
+      conditions: [
+        "EQ Actor Attacked",
+        "NOT practice.fight.Attacker.Attacked.endurance.Attacker!weakened"
+      ],
+      outcomes: [
+        "insert practice.fight.Attacker.Attacked.endurance.Attacker!weakened"
+      ]
+    },
+    {
+      name: "[Actor]: Punches [Attacker]",
+      human_readable: "Swings at Attacked, knocking them out",
+      conditions: [
+        "EQ Actor Attacked",
+        "practice.fight.Attacker.Attacked.endurance.Attacker!weakened"
       ],
       outcomes: [
         "delete practice.fight.Attacker.Attacked"
@@ -126,6 +151,7 @@ const greetPractice = {
   actions: [
     {
       name: "[Actor]: Greet [Other]",
+      human_readable: "Says hello to Other",
       conditions: [
         "EQ Actor Greeter",
         "EQ Other Greeted"
@@ -153,6 +179,7 @@ const tendBarPractice = {
     // but they seem useful for these kinds of group situations.
     {
       name: "[Actor]: Walk up to bar",
+      human_readable: "Walks up to the bar",
       conditions: [
         "NEQ Actor Bartender",
         "NOT practice.tendBar.Bartender.customer.Actor"
@@ -163,6 +190,7 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: Walk away from bar",
+      human_readable: "Walks away from the bar",
       conditions: [
         "practice.tendBar.Bartender.customer.Actor"
       ],
@@ -172,6 +200,7 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: Order [Beverage]",
+      human_readable: "Orders a Beverage",
       conditions: [
         "practice.tendBar.Bartender.customer.Actor",
         "NOT practice.tendBar.Bartender.customer.Actor!beverage",
@@ -185,6 +214,7 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: Fulfill [Customer]'s order",
+      human_readable: "Gets Customer a Beverage",
       conditions: [
         "EQ Actor Bartender",
         "practice.tendBar.Bartender.customer.Customer!order!Beverage"
@@ -196,6 +226,7 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: Drink [Beverage]",
+      human_readable: "Drinks their Beverage",
       conditions: [
         "practice.tendBar.Bartender.customer.Actor!beverage!Beverage"
       ],
@@ -206,17 +237,20 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: Spill [Beverage]",
+      human_readable: "Spills their Beverage",
       conditions: [
         "practice.tendBar.Bartender.customer.Actor!beverage!Beverage"
       ],
       outcomes: [
         "delete practice.tendBar.Bartender.customer.Actor!beverage",
-        "insert practice.tendBar.Bartender.customer.Actor!spill"
+        // "insert practice.tendBar.Bartender.customer.Actor!spill"
+        "insert practice.spill.Actor"
         // FIXME maybe spawn a separate spill practice like James D was playing with?
       ]
     },
     {
       name: "[Actor]: Clean up spill near [Customer]",
+      human_readable: "Cleans up Customer's spilt drink",
       conditions: [
         "practice.tendBar.Bartender.customer.Customer!spill"
       ],
@@ -571,9 +605,9 @@ const coffeePractice = {
 
 
 
-window.practiceDefs = [greetPractice , tendBarPractice, /*, coffeePractice , ticTacToePractice */];
+window.practiceDefs = [greetPractice, tendBarPractice, spill, fight/*, coffeePractice , ticTacToePractice */];
 
-window.practicesPossible = [spill, coffeePractice, ticTacToePractice, fight, tendBarPractice, greetPractice]
+window.practicesActive = {spill: [], fight: [], coffee: [], ticTacToe: [], tendBar: ["All"], greet: ["All"]}
 
 
 

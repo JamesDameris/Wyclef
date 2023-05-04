@@ -20,10 +20,19 @@ function getAllActions() { // Possible Actions for each time a character has a t
                 for (let bs of bindingSets) {
                     let formattedName = action.name;
                     for (let In of Object.entries(bs)) {
-                        formattedName = formattedName.replaceAll(`[${In[0]}]`,In[1]);
+                        let In1 = In[1].charAt(0).toUpperCase();
+                        In1 += In[1].substring(1);
+                        formattedName = formattedName.replaceAll(`[${In[0]}]`,In1);
+                    }
+                    let formattedReadable = action.human_readable;
+                    for (let In of Object.entries(bs)) {
+                        let In1 = In[1].charAt(0).toUpperCase();
+                        In1 += In[1].substring(1);
+                        formattedReadable = formattedReadable.replaceAll(In[0],In1);
                     }
                     bs["practice"] = practice.id;
-                    bs["action"] = formattedName;    
+                    bs["action"] = formattedName;  
+                    bs["human_readable"] = formattedReadable;
                     bs["outcomes"] = action.outcomes;
                     actions.push(bs);
                 }
@@ -38,30 +47,32 @@ function initPracticesSelected() { // initialize all characters at beginning (fo
     // let initializers = [];
     for (let ch of character_list) {
         for (let practice of window.practiceDefs) { 
-            if (practice.roles.length > 1) {
-                for (let char of character_list) {
-                    if (char == ch) { continue; }
-                    window.insert(`practice.${practice.id}.${ch.toLowerCase()}.${char.toLowerCase()}`);
+            if (window.practicesActive[practice.id] == "All" || window.practicesActive[practice.id].includes(ch)) {
+                if (practice.roles.length > 1) {
+                    for (let char of character_list) {
+                        if (char == ch) { continue; }
+                        window.insert(`practice.${practice.id}.${ch.toLowerCase()}.${char.toLowerCase()}`);
+                    }
+                } else {
+                    if (ch == play_as) { 
+                        window.insert(`practice.${practice.id}.${ch.toLowerCase()}`); 
+                    }
                 }
-            } else {
-                if (ch == play_as) { 
-                    window.insert(`practice.${practice.id}.${ch.toLowerCase()}`); 
+                let pracData = practice.data ? practice.data : null;
+                if (pracData) {
+                    var theData = pracData.map(pd => "practiceData."+practice.id+"."+pd); // set up the data for the query 
+                    for (let d of theData) {
+                        window.insert(d);
+                    }
                 }
-            }
-            let pracData = practice.data ? practice.data : null;
-            if (pracData) {
-                var theData = pracData.map(pd => "practiceData."+practice.id+"."+pd); // set up the data for the query 
-                for (let d of theData) {
-                    window.insert(d);
-                }
-            }
-            let PracInstances = window.unorderedQuery([`practice.${practice.id}.${practice.roles.join('.')}`]);
-            for (let inst of PracInstances) {
-                if (inst.init) { // specifically here, do practice instances
-                    for (let i of inst.init) {
-                        console.log("Inst",inst);
-                        let iSent = i.split(" ");
-                        window.insert(iSent[1]);
+                let PracInstances = window.unorderedQuery([`practice.${practice.id}.${practice.roles.join('.')}`]);
+                for (let inst of PracInstances) {
+                    if (inst.init) { // specifically here, do practice instances
+                        for (let i of inst.init) {
+                            console.log("Inst",inst);
+                            let iSent = i.split(" ");
+                            window.insert(iSent[1]);
+                        }
                     }
                 }
             }
@@ -122,7 +133,6 @@ function doneWCharac(){
 }
 function possibleActions(){
     let posActs = getAllActions();
-    console.log("Possible Actions:",posActs);
     document.getElementById("actions").innerHTML = "";
     for(var i = 0; i<posActs.length; i++){
         var button = document.createElement("button");
@@ -141,7 +151,7 @@ function possibleActions(){
     var action = document.createTextNode("Do Nothing");
     action.id = "Do Nothing";
     button.appendChild(action);
-    let tempInst = {action: "Did Nothing", outcomes: ""};
+    let tempInst = {action: "Do Nothing",human_readable: "Does nothing", outcomes: ""};
     button.onclick = function(event){
         var action_to_take = event.target;
         take_action(action_to_take, tempInst);
@@ -150,14 +160,12 @@ function possibleActions(){
 }
 function take_action(eventTarget, instance) { // also perform the outcomes !!!! TODO
     // add so that on action taken, add to character list action
-    console.log(instance);
-    display(instance.action, play_as);
+    display(instance.human_readable, play_as);
    
     document.getElementById("actions").removeChild(eventTarget); // use query
     for (out of instance.outcomes) {
         let o = out.split(" ");
         let formattedEntry = o[1];
-        console.log("Original", formattedEntry);
         for (let In of Object.entries(instance)) {
             if (In[0] == "practice" || In[0] == "action" || In[0] == "outcomes") { continue; }
             formattedEntry = formattedEntry.replaceAll(In[0],In[1]);
@@ -168,12 +176,16 @@ function take_action(eventTarget, instance) { // also perform the outcomes !!!! 
         } else if (o[0] == "insert") {
             console.log("Inserting:", formattedEntry);
             window.insert(formattedEntry);
+            if (window.practicesActive[`${o[1].split(".")[1]}`][0] != "All" && !window.practicesActive[`${o[1].split(".")[1]}`].includes(formattedEntry.split(".")[2])) {
+                window.practicesActive[`${o[1].split(".")[1]}`].push(formattedEntry.split(".")[2]);
+            }
         }
     }
     // document.getElementById('char-list').innerText = "Playing as: " + play_as; // replace with bolding the next character to perform an action
     let charList = document.getElementById('char-list');
+    let next_id = (current_id + 1)%charnum;
     for (let ch of charList.children) {
-        if (ch.innerText == character_list[current_id+1]) {
+        if (ch.innerText == character_list[next_id]) {
             ch.style.fontWeight = "bold";
         } else if (ch.innerText == character_list[current_id]) {
             ch.style.fontWeight = "normal";
