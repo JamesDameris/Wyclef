@@ -57,7 +57,7 @@ const spill = {
     },
     {
       name: "[Actor]: pick fight with [Teaser]",
-      human_readable: "Come at me Teaser, you're weak",
+      human_readable: "Fight me Teaser, you're weak",
       conditions: [
         "NEQ Actor Teaser",
         "NOT practice.fight.Actor.Teaser",
