@@ -52,11 +52,11 @@ const spill = {
         "EQ Actor Teaser"
       ],
       outcomes: [
-        "insert practice.spill.Spiller.angryat.Actor"
+        "insert practice.spill.Spiller.angryat.Actor" // change to be on character
       ]
     },
     {
-      name: "[Actor]: pick fight with [Teaser]",
+      name: "[Actor]: pick fight with [Teaser]", // change to be part of tendBar practice so that multiple sub practices can spawn said bar fights
       human_readable: "Fight me Teaser, you're weak",
       conditions: [
         "NEQ Actor Teaser",
@@ -102,10 +102,10 @@ const fight = {
       human_readable: "Swings at Attacked",
       conditions: [
         "EQ Actor Attacker",
-        "NOT practice.fight.Attacker.Attacked.endurance.Attacked!weakened"
+        "NOT characters.Attacked.endurance!weakened"
       ],
       outcomes: [
-        "insert practice.fight.Attacker.Attacked.endurance.Attacked!weakened"
+        "insert characters.Attacked.endurance!weakened"
       ]
     },
     {
@@ -113,10 +113,11 @@ const fight = {
       human_readable: "Swings at Attacked, knocking them out",
       conditions: [
         "EQ Actor Attacker",
-        "practice.fight.Attacker.Attacked.endurance.Attacked!weakened"
+        "characters.Attacked.endurance!weakened"
       ],
       outcomes: [
-        "delete practice.fight.Attacker.Attacked"
+        "delete practice.fight.Attacker.Attacked",
+        "insert characters.Attacked.endurance!ko"
       ]
     },
     {
@@ -124,21 +125,22 @@ const fight = {
       human_readable: "Swings at Attacker",
       conditions: [
         "EQ Actor Attacked",
-        "NOT practice.fight.Attacker.Attacked.endurance.Attacker!weakened"
+        "NOT characters.Attacker.endurance!weakened"
       ],
       outcomes: [
-        "insert practice.fight.Attacker.Attacked.endurance.Attacker!weakened"
+        "insert characters.Attacker.endurance!weakened"
       ]
     },
     {
       name: "[Actor]: Punches [Attacker]",
-      human_readable: "Swings at Attacked, knocking them out",
+      human_readable: "Swings at Attacker, knocking them out",
       conditions: [
         "EQ Actor Attacked",
-        "practice.fight.Attacker.Attacked.endurance.Attacker!weakened"
+        "characters.Attacker.endurance!weakened"
       ],
       outcomes: [
-        "delete practice.fight.Attacker.Attacked"
+        "delete practice.fight.Attacker",
+        "insert characters.Attacker.endurance!ko"
       ]
     }
   ]

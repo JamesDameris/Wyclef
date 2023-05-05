@@ -6,6 +6,11 @@ var info = {};
 var charnum = 0;
 var practices_active = [];
 
+function capitalize(str) {
+    let string = str.charAt(0).toUpperCase();
+    return string += str.substring(1);
+}
+
 function getAllActions() { // Possible Actions for each time a character has a turn
     let actions = []; 
     for (let practice of window.practiceDefs) {
@@ -19,15 +24,18 @@ function getAllActions() { // Possible Actions for each time a character has a t
                 let bindingSets = window.unorderedQuery(initialBindings.concat(action.conditions));     
                 for (let bs of bindingSets) {
                     let formattedName = action.name;
-                    for (let In of Object.entries(bs)) {
-                        let In1 = In[1].charAt(0).toUpperCase();
-                        In1 += In[1].substring(1);
-                        formattedName = formattedName.replaceAll(`[${In[0]}]`,In1);
-                    }
                     let formattedReadable = action.human_readable;
                     for (let In of Object.entries(bs)) {
-                        let In1 = In[1].charAt(0).toUpperCase();
-                        In1 += In[1].substring(1);
+                        // let In1 = In[1].charAt(0).toUpperCase();
+                        // In1 += In[1].substring(1);
+                        let In1 = capitalize(In[1]);
+                        formattedName = formattedName.replaceAll(`[${In[0]}]`,In1);
+                    }
+                    
+                    for (let In of Object.entries(bs)) {
+                        // let In1 = In[1].charAt(0).toUpperCase();
+                        // In1 += In[1].substring(1);
+                        let In1 = capitalize(In[1]);
                         formattedReadable = formattedReadable.replaceAll(In[0],In1);
                     }
                     bs["practice"] = practice.id;
@@ -166,6 +174,7 @@ function take_action(eventTarget, instance) { // also perform the outcomes !!!! 
     for (out of instance.outcomes) {
         let o = out.split(" ");
         let formattedEntry = o[1];
+        let shouldBePractice = o[1].split(".")[1];
         for (let In of Object.entries(instance)) {
             if (In[0] == "practice" || In[0] == "action" || In[0] == "outcomes") { continue; }
             formattedEntry = formattedEntry.replaceAll(In[0],In[1]);
@@ -176,8 +185,10 @@ function take_action(eventTarget, instance) { // also perform the outcomes !!!! 
         } else if (o[0] == "insert") {
             console.log("Inserting:", formattedEntry);
             window.insert(formattedEntry);
-            if (window.practicesActive[`${o[1].split(".")[1]}`][0] != "All" && !window.practicesActive[`${o[1].split(".")[1]}`].includes(formattedEntry.split(".")[2])) {
-                window.practicesActive[`${o[1].split(".")[1]}`].push(formattedEntry.split(".")[2]);
+            if (!character_list.includes(capitalize(formattedEntry.split(".")[1]))) { // talk about in paper how insert and spawning a practice need to be different and having separate logic can be cleaner
+                if (window.practicesActive[`${shouldBePractice}`][0] != "All" && !window.practicesActive[`${shouldBePractice}`].includes(formattedEntry.split(".")[2])) {
+                    window.practicesActive[`${shouldBePractice}`].push(formattedEntry.split(".")[2]);
+                }
             }
         }
     }
