@@ -33,7 +33,7 @@ function insert (sentence) {
     // iterate through tokens
     for (token of tokens) {
         // determine if db doesn't have the key or it does and should be replaced
-        if (!node[token[0]] || node[token[1]] == '!' ) {
+        if (!node[token[0]] || token[1] == '!' ) {
             node[token[0]] = {}
         }
         node = node[token[0]];

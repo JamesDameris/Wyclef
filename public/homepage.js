@@ -159,7 +159,7 @@ function possibleActions(){
     var action = document.createTextNode("Do Nothing");
     action.id = "Do Nothing";
     button.appendChild(action);
-    let tempInst = {action: "Do Nothing",human_readable: "Does nothing", outcomes: ""};
+    let tempInst = {Actor: `${play_as.toLowerCase()}`, action: "Do Nothing",human_readable: "Does nothing", outcomes: ["insert characters.Actor.endurance!normal"]};
     button.onclick = function(event){
         var action_to_take = event.target;
         take_action(action_to_take, tempInst);
@@ -174,7 +174,7 @@ function take_action(eventTarget, instance) { // also perform the outcomes !!!! 
     for (out of instance.outcomes) {
         let o = out.split(" ");
         let formattedEntry = o[1];
-        let shouldBePractice = o[1].split(".")[1];
+        let shouldBePractice = o[1].split(/[.!]/)[1];
         for (let In of Object.entries(instance)) {
             if (In[0] == "practice" || In[0] == "action" || In[0] == "outcomes") { continue; }
             formattedEntry = formattedEntry.replaceAll(In[0],In[1]);
@@ -185,9 +185,9 @@ function take_action(eventTarget, instance) { // also perform the outcomes !!!! 
         } else if (o[0] == "insert") {
             console.log("Inserting:", formattedEntry);
             window.insert(formattedEntry);
-            if (!character_list.includes(capitalize(formattedEntry.split(".")[1]))) { // talk about in paper how insert and spawning a practice need to be different and having separate logic can be cleaner
-                if (window.practicesActive[`${shouldBePractice}`][0] != "All" && !window.practicesActive[`${shouldBePractice}`].includes(formattedEntry.split(".")[2])) {
-                    window.practicesActive[`${shouldBePractice}`].push(formattedEntry.split(".")[2]);
+            if (!character_list.includes(capitalize(formattedEntry.split(/[.!]/)[1]))) { // talk about in paper how insert and spawning a practice need to be different and having separate logic can be cleaner
+                if (window.practicesActive[`${shouldBePractice}`][0] != "All" && !window.practicesActive[`${shouldBePractice}`].includes(formattedEntry.split(/[.!]/)[2])) {
+                    window.practicesActive[`${shouldBePractice}`].push(formattedEntry.split(/[.!]/)[2]);
                 }
             }
         }

@@ -5,7 +5,7 @@ class MyCharacter { // change to make only name required, all others are generat
         
         this.height = height; // in centimeters
 
-        this.weight = Math.floor((((height - 140)/60 ) * 65) + 45) + Math.floor(Math.random() * (6) - 3);; // in kilograms 110-45 with rand deviation of 3 kgs
+        this.weight = Math.floor((((height - 140)/60 ) * 65) + 45) + Math.floor(Math.random() * (6) - 3); // in kilograms 110-45 with rand deviation of 3 kgs
         
         // randomizing eye_color
         let posShade = ["dark","light",""];

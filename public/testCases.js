@@ -48,29 +48,20 @@ const spill = {
       name: "[Actor]: teases [Spiller]",
       human_readable: "Spiller, go home you're drunk.",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "NEQ Actor Spiller",
         "EQ Actor Teaser"
       ],
       outcomes: [
-        "insert practice.spill.Spiller.angryat.Actor" // change to be on character
-      ]
-    },
-    {
-      name: "[Actor]: pick fight with [Teaser]", // change to be part of tendBar practice so that multiple sub practices can spawn said bar fights
-      human_readable: "Fight me Teaser, you're weak",
-      conditions: [
-        "NEQ Actor Teaser",
-        "NOT practice.fight.Actor.Teaser",
-        "practice.spill.Actor.angryat.Teaser"
-      ],
-      outcomes: [
-        "insert practice.fight.Actor.Teaser"
+       // "insert practice.spill.Spiller.angryat.Actor" // change to be on character
+        "insert characters.Spiller.angryat.Actor"
       ]
     },
     {
       name: "[Actor]: Cleans up spill caused by [Spiller]",
       human_readable: "Cleans up Spiller's spilt drink",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "NEQ Actor Spiller",     
         "NOT practice.fight.Actor.Teaser"
       ],
@@ -82,6 +73,7 @@ const spill = {
       name: "[Actor]: Cleans up their own spill",
       human_readable: "Cleans up their spilt drink",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "NOT practice.fight.Actor.Teaser",
         "EQ Actor Spiller"
       ],
@@ -101,6 +93,7 @@ const fight = {
       name: "[Actor]: Punches [Attacked]",
       human_readable: "Swings at Attacked",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "EQ Actor Attacker",
         "NOT characters.Attacked.endurance!weakened"
       ],
@@ -112,18 +105,22 @@ const fight = {
       name: "[Actor]: Punches [Attacked]",
       human_readable: "Swings at Attacked, knocking them out",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "EQ Actor Attacker",
         "characters.Attacked.endurance!weakened"
       ],
       outcomes: [
         "delete practice.fight.Attacker.Attacked",
-        "insert characters.Attacked.endurance!ko"
+        "insert characters.Attacked.endurance!ko",
+        "insert characters.Attacker.wonfight.Attacked",
+        "insert characters.Attacked.lostfight.Attacker"
       ]
     },
     {
       name: "[Actor]: Punches [Attacker]",
       human_readable: "Swings at Attacker",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "EQ Actor Attacked",
         "NOT characters.Attacker.endurance!weakened"
       ],
@@ -132,15 +129,45 @@ const fight = {
       ]
     },
     {
+      name: "[Actor]: Attempts to diffuse fight with [Attacker]",
+      human_readable: "Hey Attacker, I meant no harm",
+      conditions: [
+        "NOT characters.Actor.endurance!ko",
+        "EQ Actor Attacked",
+        "NOT characters.Attacker.endurance!weakened"
+      ],
+      outcomes: [
+        "insert practice.fight.Attacker.Attacked.diffuse!attempted"
+      ]
+    },
+    {
+      name: "[Actor]: Settles dispute with [Attacked]",
+      human_readable: "Fine, but what what you say",
+      conditions: [
+        "NOT characters.Actor.endurance!ko",
+        "EQ Actor Attacker",
+        "NOT characters.Attacker.endurance!weakened",
+        "practice.fight.Attacker.Attacked.diffuse!attempted"
+      ],
+      outcomes: [
+        "delete characters.Attacker.angryat.Attacked",
+        "delete practice.fight.Attacker.Attacked"
+      ]
+    },
+    {
       name: "[Actor]: Punches [Attacker]",
       human_readable: "Swings at Attacker, knocking them out",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "EQ Actor Attacked",
         "characters.Attacker.endurance!weakened"
       ],
       outcomes: [
         "delete practice.fight.Attacker",
-        "insert characters.Attacker.endurance!ko"
+        "insert characters.Attacker.endurance!ko",
+        "insert characters.Attacked.wonfight.Attacker",
+        "insert characters.Attacker.lostfight.Attacked",
+        "insert characters.Attacker.scaredof.Attacked"
       ]
     }
   ]
@@ -155,6 +182,8 @@ const greetPractice = {
       name: "[Actor]: Greet [Other]",
       human_readable: "Says hello to Other",
       conditions: [
+        "NOT characters.Actor.scaredof.Other",
+        "NOT characters.Actor.endurance!ko",
         "EQ Actor Greeter",
         "EQ Other Greeted"
       ],
@@ -183,6 +212,7 @@ const tendBarPractice = {
       name: "[Actor]: Walk up to bar",
       human_readable: "Walks up to the bar",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "NEQ Actor Bartender",
         "NOT practice.tendBar.Bartender.customer.Actor"
       ],
@@ -194,6 +224,7 @@ const tendBarPractice = {
       name: "[Actor]: Walk away from bar",
       human_readable: "Walks away from the bar",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.tendBar.Bartender.customer.Actor"
       ],
       outcomes: [
@@ -204,6 +235,7 @@ const tendBarPractice = {
       name: "[Actor]: Order [Beverage]",
       human_readable: "Orders a Beverage",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.tendBar.Bartender.customer.Actor",
         "NOT practice.tendBar.Bartender.customer.Actor!beverage",
         "NOT practice.tendBar.Bartender.customer.Actor!order",
@@ -218,6 +250,7 @@ const tendBarPractice = {
       name: "[Actor]: Fulfill [Customer]'s order",
       human_readable: "Gets Customer a Beverage",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "EQ Actor Bartender",
         "practice.tendBar.Bartender.customer.Customer!order!Beverage"
       ],
@@ -230,6 +263,7 @@ const tendBarPractice = {
       name: "[Actor]: Drink [Beverage]",
       human_readable: "Drinks their Beverage",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.tendBar.Bartender.customer.Actor!beverage!Beverage"
       ],
       outcomes: [
@@ -241,6 +275,7 @@ const tendBarPractice = {
       name: "[Actor]: Spill [Beverage]",
       human_readable: "Spills their Beverage",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.tendBar.Bartender.customer.Actor!beverage!Beverage"
       ],
       outcomes: [
@@ -251,17 +286,31 @@ const tendBarPractice = {
       ]
     },
     {
-      name: "[Actor]: Clean up spill near [Customer]",
-      human_readable: "Cleans up Customer's spilt drink",
+      name: "[Actor]: pick fight with [Teaser]", 
+      human_readable: "Fight me Teaser, you're weak",
       conditions: [
-        "practice.tendBar.Bartender.customer.Customer!spill"
+        "NOT characters.Actor.scaredof.Teaser",
+        "NOT characters.Actor.endurance!ko",
+        "NEQ Actor Teaser",
+        "NOT practice.fight.Actor.Teaser",
+        "characters.Actor.angryat.Teaser"
       ],
       outcomes: [
-        "delete practice.tendBar.Bartender.customer.Customer!spill"
-        // FIXME mark politeness stuff for bartender vs spiller vs other customer cleaning it up?
-        // make the bartender more annoyed?
+        "insert practice.fight.Actor.Teaser"
       ]
     }
+    // ,{
+    //   name: "[Actor]: Clean up spill near [Customer]",
+    //   human_readable: "Cleans up Customer's spilt drink",
+    //   conditions: [
+    //     "practice.tendBar.Bartender.customer.Customer!spill"
+    //   ],
+    //   outcomes: [
+    //     "delete practice.tendBar.Bartender.customer.Customer!spill"
+    //     // FIXME mark politeness stuff for bartender vs spiller vs other customer cleaning it up?
+    //     // make the bartender more annoyed?
+    //   ]
+    // }
   ]
 };
 
@@ -290,6 +339,7 @@ const ticTacToePractice = {
     {
       name: "[Actor]: Play [Piece] at [Row] [Col]",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         // Check whether this move should be possible
         "practice.ticTacToe.Player1.Player2.whoseTurn!Actor!Other",
         "practice.ticTacToe.Player1.Player2.player.Actor.piece!Piece",
@@ -311,6 +361,7 @@ const ticTacToePractice = {
     {
       name: "[Actor]: Declare [Winner] as the winner",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.ticTacToe.Player1.Player2.board.top.Col!Piece",
         "practice.ticTacToe.Player1.Player2.board.middle.Col!Piece",
         "practice.ticTacToe.Player1.Player2.board.bottom.Col!Piece",
@@ -328,6 +379,7 @@ const ticTacToePractice = {
     {
       name: "[Actor]: Declare [Winner] as the winner",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.ticTacToe.Player1.Player2.board.Row.left!Piece",
         "practice.ticTacToe.Player1.Player2.board.Row.center!Piece",
         "practice.ticTacToe.Player1.Player2.board.Row.right!Piece",
@@ -345,6 +397,7 @@ const ticTacToePractice = {
     {
       name: "[Actor]: Declare [Winner] as the winner",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.ticTacToe.Player1.Player2.board.top.left!Piece",
         "practice.ticTacToe.Player1.Player2.board.middle.center!Piece",
         "practice.ticTacToe.Player1.Player2.board.bottom.right!Piece",
@@ -362,6 +415,7 @@ const ticTacToePractice = {
     {
       name: "[Actor]: Declare [Winner] as the winner",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.ticTacToe.Player1.Player2.board.top.right!Piece",
         "practice.ticTacToe.Player1.Player2.board.middle.center!Piece",
         "practice.ticTacToe.Player1.Player2.board.bottom.left!Piece",
@@ -380,6 +434,7 @@ const ticTacToePractice = {
     {
       name: "[Actor]: Declare the game tied",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         // Check that every row has both piece types in it
         "practice.ticTacToe.Player1.Player2.board.top.C1!x",
         "practice.ticTacToe.Player1.Player2.board.top.C2!o",
@@ -412,6 +467,7 @@ const ticTacToePractice = {
     {
       name: "[Actor]: Declare the game tied",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         // Check that every row has both piece types in it
         "practice.ticTacToe.Player1.Player2.board.top.C1!x",
         "practice.ticTacToe.Player1.Player2.board.top.C2!o",
@@ -444,6 +500,7 @@ const ticTacToePractice = {
     {
       name: "[Actor]: Declare the game tied",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         // Check that every row has both piece types in it
         "practice.ticTacToe.Player1.Player2.board.top.C1!x",
         "practice.ticTacToe.Player1.Player2.board.top.C2!o",
@@ -476,6 +533,7 @@ const ticTacToePractice = {
     {
       name: "[Actor]: Declare the game tied",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         // Check that every row has both piece types in it
         "practice.ticTacToe.Player1.Player2.board.top.C1!x",
         "practice.ticTacToe.Player1.Player2.board.top.C2!o",
@@ -530,6 +588,7 @@ const coffeePractice = {
     {
       name: "[Actor]: Walk up to counter",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "NEQ Actor Barista",
         "NOT practice.coffee.Barista.customer.Actor"
       ],
@@ -540,6 +599,7 @@ const coffeePractice = {
     {
       name: "[Actor]: Walk away from counter",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.coffee.Barista.customer.Actor"
       ],
       outcomes: [
@@ -549,6 +609,7 @@ const coffeePractice = {
     {
       name: "[Actor]: Order [Beverage]",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.coffee.Barista.customer.Actor",
         "NOT practice.coffee.Barista.customer.Actor!beverage",
         "practiceData.coffee.beverageType.Beverage"
@@ -561,6 +622,7 @@ const coffeePractice = {
     {
       name: "[Actor]: Fulfill [Customer]'s order",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "EQ Actor Barista",
         "practice.coffee.Barista.customer.Customer!order!Beverage"
       ],
@@ -572,6 +634,7 @@ const coffeePractice = {
     {
       name: "[Actor]: Drink [Beverage]",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.coffee.Barista.customer.Actor!beverage!Beverage"
       ],
       outcomes: [
@@ -581,6 +644,7 @@ const coffeePractice = {
     {
       name: "[Actor]: Spill [Beverage]",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.coffee.Barista.customer.Actor!beverage!Beverage"
       ],
       outcomes: [
@@ -591,6 +655,7 @@ const coffeePractice = {
     {
       name: "[Actor]: Clean up spill near [Customer]",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.coffee.Barista.customer.Customer!spill"
       ],
       outcomes: [
