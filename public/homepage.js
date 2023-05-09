@@ -134,7 +134,7 @@ function doneWCharac(){
         if (charIt == character_list[0]) { charI.style.fontWeight = "bold"; }
         charList.appendChild(charI);
     }
-    // document.getElementById("left-section").appendChild(done);
+    //document.getElementById("left-section").appendChild("<h1>Choose an action:</h1><div id='action-container'><ul id='actions'></ul></div>");
     document.getElementById("left-section").appendChild(charList);
     initPracticesSelected();
     possibleActions();
@@ -212,7 +212,7 @@ function display(textToShow, charac){ // change to be on each action (when chara
     
     var charItem = document.createElement('p');
     charItem.id = 'char';
-    charItem.classList.add('fade-in-scene');
+    charItem.classList.add('typewriter');
     var def = document.createElement('p');
 
     def.innerText = textToShow;

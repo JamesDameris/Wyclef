@@ -16,17 +16,43 @@ const C = require("./public/characters.js");
 // Practice Parser File
 let sentences = [];
 let tokenList = [];
+
+/*
+
+
+
+
+practice.ticTacToe.table1.players.bob
+practice.ticTacToe.table1.players.joe
+practice.ticTacToe.table1.whoseMove!joe
+practice.ticTacToe.table1.board.top.l!x
+practice.ticTacToe.table1.board.center.l!x
+practice.ticTacToe.table1.board.bottom.l!x
+
+practice.ticTacToe.joe.bob.board.top.l!x
+practice.ticTacToe.joe.bob.board.middle.l!x
+practice.ticTacToe.joe.bob.board.bottom.l!x
+practice.ticTacToe.joe.bob.board.top.c!o
+practice.ticTacToe.joe.bob.board.middle.c!o
+practice.ticTacToe.joe.bob.board.bottom.c!empty
+practice.ticTacToe.joe.bob.board.top.r!x
+practice.ticTacToe.joe.bob.board.middle.r!empty
+practice.ticTacToe.joe.bob.board.bottom.r!o
+practice.ticTacToe.joe.bob.player.joe.piece!x
+practice.ticTacToe.joe.bob.player.bob.piece!o
+
+
+
+*/
 sentences.push("practice.ticTacToe.table1.players.bob");
 sentences.push("practice.ticTacToe.table1.players.joe");
 sentences.push("practice.ticTacToe.table1.whoseMove!joe");
-
 sentences.push("practice.ticTacToe.table1.board.top.l!x");
 sentences.push("practice.ticTacToe.table1.board.center.l!x");
 sentences.push("practice.ticTacToe.table1.board.bottom.l!x");
 
 sentences.push("practice.ticTacToe.table2.players.mary");
 sentences.push("practice.ticTacToe.table2.players.anne");
-
 sentences.push("practice.ticTacToe.table2.board.top.l!x");
 sentences.push("practice.ticTacToe.table2.board.center.l!x");
 sentences.push("practice.ticTacToe.table2.board.bottom.l!x");

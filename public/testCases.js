@@ -142,7 +142,7 @@ const fight = {
     },
     {
       name: "[Actor]: Settles dispute with [Attacked]",
-      human_readable: "Fine, but what what you say",
+      human_readable: "Fine, but watch what you say next time",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "EQ Actor Attacker",
@@ -287,7 +287,7 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: pick fight with [Teaser]", 
-      human_readable: "Fight me Teaser, you're weak",
+      human_readable: "Fight me Teaser, you buffoon",
       conditions: [
         "NOT characters.Actor.scaredof.Teaser",
         "NOT characters.Actor.endurance!ko",
