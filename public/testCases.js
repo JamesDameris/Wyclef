@@ -84,6 +84,49 @@ const spill = {
   ] 
 }
 
+const jukebox = {
+  id: "jukebox",
+  name: "[Player] uses the jukebox",
+  data: [
+          "song.Piano Man by Billy Joel",
+          "song.American Pie by Don McLean",
+          "song.Starman by David Bowie",
+          "song.Material Girl by Madonna",
+          "song.Come Together by The Beatles",
+          "song.Jump by Van Halen",
+          "song.Separate Ways (Worlds Apart) by Journey",
+          "song.What's Up by 4 Non Blondes",
+          "song.Closing Time by Semisonic"
+        ],
+  roles: ["Player"], // must be start with uppercase for each role
+  actions: [
+    {
+      name: "[Actor]: Insert 25 cents to play a song",
+      human_readable: "Puts 25 cents into the jukebox",
+      conditions: [
+        "EQ Actor Player",
+        "NOT practice.jukebox.Actor!paid"
+      ],
+      outcomes: [
+        "insert practice.jukebox.Actor!paid"
+      ]
+    },
+    {
+      name: "[Actor]: Pick Song",
+      human_readable: "Puts on Song",
+      conditions: [
+        "EQ Actor Player",
+        "practice.jukebox.Actor!paid",
+        "practiceData.jukebox.song.Song"
+      ],
+      outcomes: [
+        "delete practice.jukebox.Actor!paid",
+        "insert practice.jukebox.Actor.playing"
+      ]
+    },
+  ]
+}
+
 const fight = {
   id: "fight",
   name: "[Attacker] starts a bar fight with [Attacked]",
@@ -298,7 +341,10 @@ const tendBarPractice = {
       outcomes: [
         "insert practice.fight.Actor.Teaser"
       ]
-    }
+    // },
+    // {
+    //   name: "[Actor]: "
+    // }
     // ,{
     //   name: "[Actor]: Clean up spill near [Customer]",
     //   human_readable: "Cleans up Customer's spilt drink",
