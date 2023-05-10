@@ -46,7 +46,7 @@ const spill = {
   actions: [
     {
       name: "[Actor]: teases [Spiller]",
-      human_readable: "Spiller, go home you're drunk.",
+      human_readable: "'Spiller, go home you're drunk'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "NEQ Actor Spiller",
@@ -130,7 +130,7 @@ const fight = {
     },
     {
       name: "[Actor]: Attempts to diffuse fight with [Attacker]",
-      human_readable: "Hey Attacker, I meant no harm",
+      human_readable: "'Hey Attacker, I meant no harm'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "EQ Actor Attacked",
@@ -142,7 +142,7 @@ const fight = {
     },
     {
       name: "[Actor]: Settles dispute with [Attacked]",
-      human_readable: "Fine, but watch what you say next time",
+      human_readable: "'Fine, but watch what you say next time'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "EQ Actor Attacker",
@@ -180,7 +180,7 @@ const greetPractice = {
   actions: [
     {
       name: "[Actor]: Greet [Other]",
-      human_readable: "Says hello to Other",
+      human_readable: "'Hi Other'",
       conditions: [
         "NOT characters.Actor.scaredof.Other",
         "NOT characters.Actor.endurance!ko",
@@ -233,7 +233,7 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: Order [Beverage]",
-      human_readable: "Orders a Beverage",
+      human_readable: "'Can I have a Beverage?'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "practice.tendBar.Bartender.customer.Actor",
@@ -248,7 +248,7 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: Fulfill [Customer]'s order",
-      human_readable: "Gets Customer a Beverage",
+      human_readable: "'Here's a Beverage, Customer'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "EQ Actor Bartender",
@@ -273,7 +273,7 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: Spill [Beverage]",
-      human_readable: "Spills their Beverage",
+      human_readable: "'Oh no I split my Beverage!'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "practice.tendBar.Bartender.customer.Actor!beverage!Beverage"
@@ -287,7 +287,7 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: pick fight with [Teaser]", 
-      human_readable: "Fight me Teaser, you buffoon",
+      human_readable: "'Fight me Teaser, you buffoon'",
       conditions: [
         "NOT characters.Actor.scaredof.Teaser",
         "NOT characters.Actor.endurance!ko",

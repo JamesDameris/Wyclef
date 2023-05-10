@@ -213,14 +213,9 @@ function display(textToShow, charac){ // change to be on each action (when chara
     var charItem = document.createElement('p');
     charItem.id = 'char';
     charItem.classList.add('typewriter');
-    var def = document.createElement('p');
-
-    def.innerText = textToShow;
-
-    charItem.innerHTML = `<i><b style='font-size: 150%;'>${charac}<b><i>`;
-    charItem.appendChild(def);
+    charItem.innerHTML = `<i><b style='font-size: 110%;'>${charac}:</b></i>  ${textToShow}`;
     document.getElementById('script').appendChild(charItem); 
-    def.scrollIntoView();
+    charItem.scrollIntoView();
 
 }
 

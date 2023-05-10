@@ -9,6 +9,11 @@
             justify-content: space-evenly;
             background-color: white;
         }
+
+        #script p {
+            margin-bottom: 0.5em;
+        }
+
         #left-section {
             width: 45%;
             padding: 20px;
@@ -63,7 +68,10 @@
         }
         button{
             border: 1px solid black;
-            border-radius: 30px;
+            border-radius: 10px;
+            padding: 0.1em 0.5em 0.1em 0.5em;
+            margin-right: 0.5em;
+            margin-bottom: 0.25em;
             background-color: white;
             transition-duration: .2s;
         }
@@ -116,7 +124,6 @@
             <input type="text" id="newname" onfocus="this.value=''">
             <br><br>
             <button onclick="addChar()">Add Character</button>
-            <br><br>
             <button onclick="doneWCharac()">Done Adding Characters</button>
             <br><br>
         </div>
