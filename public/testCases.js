@@ -341,7 +341,7 @@ const tendBarPractice = {
       outcomes: [
         "insert practice.fight.Actor.Teaser"
       ]
-    // },
+    }
     // {
     //   name: "[Actor]: "
     // }
