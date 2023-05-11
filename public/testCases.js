@@ -172,6 +172,7 @@ const jukebox = {
       name: "[Actor]: Hate on [Song]",
       human_readable: "'This song is horrible, please change it'",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.jukebox.Thejukebox.playedBy!User",
         "NEQ Actor User",
         "practice.jukebox.Thejukebox.playing!Song",
@@ -186,6 +187,7 @@ const jukebox = {
       name: "[Actor]: Love [Song]",
       human_readable: "'I love this song! Its one of my favorites'",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.jukebox.Thejukebox.playedBy!User",
         "NEQ Actor User",
         "practice.jukebox.Thejukebox.playing!Song",
@@ -437,6 +439,7 @@ const tendBarPractice = {
       name: "[Actor]: Walk up to the jukebox",
       human_readable: "Walks up to the jukebox",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "NOT practice.jukebox.thejukebox.inUseBy",
         "NOT practice.jukebox.thejukebox.inUseBy!Actor",
         "NOT practice.tendBar.Bartender.customer.Actor",
@@ -450,6 +453,7 @@ const tendBarPractice = {
       name: "[Actor]: Walk to the jukebox, push aside [User]",
       human_readable: "Walks up to the jukebox. 'Get out of the way User'",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.jukebox.thejukebox.inUseBy!User",
         "NOT practice.jukebox.thejukebox.inUseBy!Actor",
         "NOT practice.tendBar.Bartender.customer.Actor",
@@ -465,6 +469,7 @@ const tendBarPractice = {
       name: "[Actor]: Walk from bar to the jukebox ",
       human_readable: "Gets up from the bar and walks up to the jukebox",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.tendBar.Bartender.customer.Actor",
         "NOT practice.jukebox.thejukebox.inUseBy",
         "NOT practice.jukebox.thejukebox.inUseBy!Actor",
@@ -479,6 +484,7 @@ const tendBarPractice = {
       name: "[Actor]: Walk from bar to jukebox, push aside [User]",
       human_readable: "Goes from bar to jukebox. 'Get out of the way User'",
       conditions: [
+        "NOT characters.Actor.endurance!ko",
         "practice.tendBar.Bartender.customer.Actor",
         "practice.jukebox.thejukebox.inUseBy!User",
         "NOT practice.jukebox.thejukebox.inUseBy!Actor",
