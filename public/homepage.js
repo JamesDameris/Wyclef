@@ -29,13 +29,10 @@ function getAllActions() { // Possible Actions for each time a character has a t
                         // let In1 = In[1].charAt(0).toUpperCase();
                         // In1 += In[1].substring(1);
                         let In1 = capitalize(In[1]);
+                        if (songMapping[In1]) {
+                            In1 = songMapping[In1];
+                        }
                         formattedName = formattedName.replaceAll(`[${In[0]}]`,In1);
-                    }
-                    
-                    for (let In of Object.entries(bs)) {
-                        // let In1 = In[1].charAt(0).toUpperCase();
-                        // In1 += In[1].substring(1);
-                        let In1 = capitalize(In[1]);
                         formattedReadable = formattedReadable.replaceAll(In[0],In1);
                     }
                     bs["practice"] = practice.id;
@@ -55,22 +52,24 @@ function initPracticesSelected() { // initialize all characters at beginning (fo
     // let initializers = [];
     for (let ch of character_list) {
         for (let practice of window.practiceDefs) { 
+            let pracData = practice.data ? practice.data : null; 
+            if (pracData) {// initializing constant practiceData, which is independent
+                var theData = pracData.map(pd => "practiceData."+practice.id+"."+pd); // set up the data for the query 
+                for (let d of theData) {
+                    window.insert(d);
+                }
+            }
             if (window.practicesActive[practice.id] == "All" || window.practicesActive[practice.id].includes(ch)) {
                 if (practice.roles.length > 1) {
                     for (let char of character_list) {
                         if (char == ch) { continue; }
                         window.insert(`practice.${practice.id}.${ch.toLowerCase()}.${char.toLowerCase()}`);
                     }
-                } else {
+                } else if (practice.id == "jukebox") {
+                    window.insert(`practice.jukebox.thejukebox`);
+                } else if (practice.roles.length == 1) {
                     if (ch == play_as) { 
                         window.insert(`practice.${practice.id}.${ch.toLowerCase()}`); 
-                    }
-                }
-                let pracData = practice.data ? practice.data : null;
-                if (pracData) {
-                    var theData = pracData.map(pd => "practiceData."+practice.id+"."+pd); // set up the data for the query 
-                    for (let d of theData) {
-                        window.insert(d);
                     }
                 }
                 let PracInstances = window.unorderedQuery([`practice.${practice.id}.${practice.roles.join('.')}`]);
@@ -213,14 +212,9 @@ function display(textToShow, charac){ // change to be on each action (when chara
     var charItem = document.createElement('p');
     charItem.id = 'char';
     charItem.classList.add('typewriter');
-    var def = document.createElement('p');
-
-    def.innerText = textToShow;
-
-    charItem.innerHTML = `<i><b style='font-size: 150%;'>${charac}<b><i>`;
-    charItem.appendChild(def);
+    charItem.innerHTML = `<i><b style='font-size: 110%;'>${charac}:</b></i>  ${textToShow}`;
     document.getElementById('script').appendChild(charItem); 
-    def.scrollIntoView();
+    charItem.scrollIntoView();
 
 }
 

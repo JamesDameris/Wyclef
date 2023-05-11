@@ -46,7 +46,7 @@ const spill = {
   actions: [
     {
       name: "[Actor]: teases [Spiller]",
-      human_readable: "Spiller, go home you're drunk.",
+      human_readable: "'Spiller, go home you're drunk'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "NEQ Actor Spiller",
@@ -84,46 +84,120 @@ const spill = {
   ] 
 }
 
+window.songMapping = {
+  Piano_Man_by_Billy_Joel: "Piano Man by Billy Joel",
+  American_Pie_by_Don_McLean: "American Pie by Don McLean",
+  Starman_by_David_Bowie: "Starman by David Bowie",
+  Material_Girl_by_Madonna: "Material Girl by Madonna",
+  Come_Together_by_The_Beatles: "Come Together by The Beatles",
+  Jump_by_Van_Halen: "Jump by Van Halen",
+  Separate_Ways_Worlds_Apart_by_Journey: "Separate Ways (Worlds Apart) by Journey",
+  Whats_Up_by_4_Non_Blondes: "What's Up by 4 Non Blondes",
+  Closing_Time_by_Semisonic: "Closing Time by Semisonic"
+ }
+
 const jukebox = {
   id: "jukebox",
-  name: "[Player] uses the jukebox",
+  name: "the jukebox resides on the right of the bar",
   data: [
-          "song.Piano Man by Billy Joel",
-          "song.American Pie by Don McLean",
-          "song.Starman by David Bowie",
-          "song.Material Girl by Madonna",
-          "song.Come Together by The Beatles",
-          "song.Jump by Van Halen",
-          "song.Separate Ways (Worlds Apart) by Journey",
-          "song.What's Up by 4 Non Blondes",
-          "song.Closing Time by Semisonic"
+          "song.piano_Man_by_Billy_Joel",
+          "song.american_Pie_by_Don_McLean",
+          "song.starman_by_David_Bowie",
+          "song.material_Girl_by_Madonna",
+          "song.come_Together_by_The_Beatles",
+          "song.jump_by_Van_Halen",
+          "song.separate_Ways_Worlds_Apart_by_Journey",
+          "song.whats_Up_by_4_Non_Blondes",
+          "song.closing_Time_by_Semisonic"
         ],
-  roles: ["Player"], // must be start with uppercase for each role
+  roles: ["Thejukebox"], // must be start with uppercase for each role
   actions: [
     {
       name: "[Actor]: Insert 25 cents to play a song",
       human_readable: "Puts 25 cents into the jukebox",
       conditions: [
-        "EQ Actor Player",
-        "NOT practice.jukebox.Actor!paid"
+        "NOT characters.Actor.endurance!ko",
+        "practice.jukebox.Thejukebox.inUseBy!User",
+        "EQ Actor User",
+        "NOT practice.jukebox.Thejukebox.paid!paid"
       ],
       outcomes: [
-        "insert practice.jukebox.Actor!paid"
+        "insert practice.jukebox.Thejukebox.paid!paid"
       ]
     },
     {
-      name: "[Actor]: Pick Song",
-      human_readable: "Puts on Song",
+      name: "[Actor]: Pick [Song]",
+      human_readable: "Chooses to play Song",
       conditions: [
-        "EQ Actor Player",
-        "practice.jukebox.Actor!paid",
-        "practiceData.jukebox.song.Song"
+        "NOT characters.Actor.endurance!ko",
+        "practice.jukebox.Thejukebox.inUseBy!User",
+        "EQ Actor User",
+        "practice.jukebox.Thejukebox.paid!paid",
+        "practiceData.jukebox.song.Song",
       ],
       outcomes: [
-        "delete practice.jukebox.Actor!paid",
-        "insert practice.jukebox.Actor.playing"
+        "delete practice.jukebox.Thejukebox.paid!paid",
+        "insert practice.jukebox.Thejukebox.playing!Song",
+        "insert practice.jukebox.Thejukebox.playedBy!Actor",
+        "insert characters.Actor.likes.songs.Song"
       ]
     },
+    {
+      name: "[Actor]: Skip [Song]",
+      human_readable: "Skips Song",
+      conditions: [
+        "NOT characters.Actor.endurance!ko",
+        "practice.jukebox.Thejukebox.inUseBy!User",
+        "EQ Actor User",
+        "practice.jukebox.Thejukebox.playing!Song",
+      ],
+      outcomes: [
+        "delete practice.jukebox.Thejukebox.playing",
+        "delete practice.jukebox.Thejukebox.playedBy!Actor"
+      ]
+    },
+    {
+      name: "[Actor]: Walk away from the jukebox",
+      human_readable: "Walks away from the jukebox",
+      conditions: [
+        "NOT characters.Actor.endurance!ko",
+        "practice.jukebox.Thejukebox.inUseBy!User",
+        "EQ Actor User" 
+      ],
+      outcomes: [
+        "delete practice.jukebox.Thejukebox.inUseBy"
+      ]
+    },
+    {
+      name: "[Actor]: Hate on [Song]",
+      human_readable: "'This song is horrible, please change it'",
+      conditions: [
+        "practice.jukebox.Thejukebox.playedBy!User",
+        "NEQ Actor User",
+        "practice.jukebox.Thejukebox.playing!Song",
+        "NOT characters.Actor.likes.songs.Song"
+      ],
+      outcomes: [
+        "insert characters.User.angryat.Actor",
+        "insert characters.Actor.dislikes.songs.Song"
+      ]
+    },
+    {
+      name: "[Actor]: Love [Song]",
+      human_readable: "'I love this song! Its one of my favorites'",
+      conditions: [
+        "practice.jukebox.Thejukebox.playedBy!User",
+        "NEQ Actor User",
+        "practice.jukebox.Thejukebox.playing!Song",
+        "NOT characters.Actor.dislikes.songs.Song",
+        "NOT characters.Actor.likes.songs.Song"
+      ],
+      outcomes: [
+        "insert characters.User.friendly.Actor",
+        "insert characters.Actor.friendly.User",
+        "insert characters.Actor.likes.songs.Song"
+      ]
+    }
   ]
 }
 
@@ -156,7 +230,8 @@ const fight = {
         "delete practice.fight.Attacker.Attacked",
         "insert characters.Attacked.endurance!ko",
         "insert characters.Attacker.wonfight.Attacked",
-        "insert characters.Attacked.lostfight.Attacker"
+        "insert characters.Attacked.lostfight.Attacker",
+        "insert characters.Attacked.scaredof.Attacker"
       ]
     },
     {
@@ -173,7 +248,7 @@ const fight = {
     },
     {
       name: "[Actor]: Attempts to diffuse fight with [Attacker]",
-      human_readable: "Hey Attacker, I meant no harm",
+      human_readable: "'Hey Attacker, I meant no harm'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "EQ Actor Attacked",
@@ -185,7 +260,7 @@ const fight = {
     },
     {
       name: "[Actor]: Settles dispute with [Attacked]",
-      human_readable: "Fine, but watch what you say next time",
+      human_readable: "'Fine, but watch what you say next time'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "EQ Actor Attacker",
@@ -223,7 +298,7 @@ const greetPractice = {
   actions: [
     {
       name: "[Actor]: Greet [Other]",
-      human_readable: "Says hello to Other",
+      human_readable: "'Hi Other'",
       conditions: [
         "NOT characters.Actor.scaredof.Other",
         "NOT characters.Actor.endurance!ko",
@@ -257,10 +332,25 @@ const tendBarPractice = {
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "NEQ Actor Bartender",
-        "NOT practice.tendBar.Bartender.customer.Actor"
+        "NOT practice.tendBar.Bartender.customer.Actor",
+        "NOT practice.jukebox.thejukebox.inUseBy!Actor"
       ],
       outcomes: [
         "insert practice.tendBar.Bartender.customer.Actor"
+      ]
+    },
+    {
+      name: "[Actor]: Walk up to bar from the jukebox",
+      human_readable: "Walks from the jukebox up to the bar",
+      conditions: [
+        "NOT characters.Actor.endurance!ko",
+        "practice.jukebox.thejukebox.inUseBy!Actor",
+        "NEQ Actor Bartender",
+        "NOT practice.tendBar.Bartender.customer.Actor"
+      ],
+      outcomes: [
+        "insert practice.tendBar.Bartender.customer.Actor",
+        "delete practice.jukebox.thejukebox.inUseBy"
       ]
     },
     {
@@ -268,6 +358,7 @@ const tendBarPractice = {
       human_readable: "Walks away from the bar",
       conditions: [
         "NOT characters.Actor.endurance!ko",
+        "NOT practice.tendBar.Bartender.customer.Actor!order!Beverage",
         "practice.tendBar.Bartender.customer.Actor"
       ],
       outcomes: [
@@ -276,11 +367,11 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: Order [Beverage]",
-      human_readable: "Orders a Beverage",
+      human_readable: "'Can I have a Beverage?'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "practice.tendBar.Bartender.customer.Actor",
-        "NOT practice.tendBar.Bartender.customer.Actor!beverage",
+        "NOT characters.Actor!beverage",
         "NOT practice.tendBar.Bartender.customer.Actor!order",
         "practiceData.tendBar.beverageType.Beverage"
       ],
@@ -291,7 +382,7 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: Fulfill [Customer]'s order",
-      human_readable: "Gets Customer a Beverage",
+      human_readable: "'Here's a Beverage, Customer'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
         "EQ Actor Bartender",
@@ -299,7 +390,7 @@ const tendBarPractice = {
       ],
       outcomes: [
         "delete practice.tendBar.Bartender.customer.Customer!order",
-        "insert practice.tendBar.Bartender.customer.Customer!beverage!Beverage"
+        "insert characters.Customer!beverage!Beverage"
       ]
     },
     {
@@ -307,22 +398,22 @@ const tendBarPractice = {
       human_readable: "Drinks their Beverage",
       conditions: [
         "NOT characters.Actor.endurance!ko",
-        "practice.tendBar.Bartender.customer.Actor!beverage!Beverage"
+        "characters.Actor!beverage!Beverage"
       ],
       outcomes: [
-        "delete practice.tendBar.Bartender.customer.Actor!beverage"
+        "delete characters.Actor!beverage"
         // TODO increase drunkenness if Beverage is alcoholic?
       ]
     },
     {
       name: "[Actor]: Spill [Beverage]",
-      human_readable: "Spills their Beverage",
+      human_readable: "'Oh no I split my Beverage!'",
       conditions: [
         "NOT characters.Actor.endurance!ko",
-        "practice.tendBar.Bartender.customer.Actor!beverage!Beverage"
+        "characters.Actor!beverage!Beverage"
       ],
       outcomes: [
-        "delete practice.tendBar.Bartender.customer.Actor!beverage",
+        "delete characters.Actor!beverage",
         // "insert practice.tendBar.Bartender.customer.Actor!spill"
         "insert practice.spill.Actor"
         // FIXME maybe spawn a separate spill practice like James D was playing with?
@@ -330,7 +421,7 @@ const tendBarPractice = {
     },
     {
       name: "[Actor]: pick fight with [Teaser]", 
-      human_readable: "Fight me Teaser, you buffoon",
+      human_readable: "'Fight me Teaser, you buffoon'",
       conditions: [
         "NOT characters.Actor.scaredof.Teaser",
         "NOT characters.Actor.endurance!ko",
@@ -341,22 +432,64 @@ const tendBarPractice = {
       outcomes: [
         "insert practice.fight.Actor.Teaser"
       ]
+    },
+    {
+      name: "[Actor]: Walk up to the jukebox",
+      human_readable: "Walks up to the jukebox",
+      conditions: [
+        "NOT practice.jukebox.thejukebox.inUseBy",
+        "NOT practice.jukebox.thejukebox.inUseBy!Actor",
+        "NOT practice.tendBar.Bartender.customer.Actor",
+        "NEQ Actor Bartender"
+      ],
+      outcomes: [
+        "insert practice.jukebox.thejukebox.inUseBy!Actor"
+      ]
+    },
+    {
+      name: "[Actor]: Walk to the jukebox, push aside [User]",
+      human_readable: "Walks up to the jukebox. 'Get out of the way User'",
+      conditions: [
+        "practice.jukebox.thejukebox.inUseBy!User",
+        "NOT practice.jukebox.thejukebox.inUseBy!Actor",
+        "NOT practice.tendBar.Bartender.customer.Actor",
+        "NEQ Actor Bartender"
+      ],
+      outcomes: [
+        "insert practice.jukebox.thejukebox.inUseBy!Actor",
+        "insert characters.User.angryat.Actor"
+
+      ]
+    },
+    {
+      name: "[Actor]: Walk from bar to the jukebox ",
+      human_readable: "Gets up from the bar and walks up to the jukebox",
+      conditions: [
+        "practice.tendBar.Bartender.customer.Actor",
+        "NOT practice.jukebox.thejukebox.inUseBy",
+        "NOT practice.jukebox.thejukebox.inUseBy!Actor",
+        "NEQ Actor Bartender"
+      ],
+      outcomes: [
+        "insert practice.jukebox.thejukebox.inUseBy!Actor",
+        "delete practice.tendBar.Bartender.customer.Actor"
+      ]
+    },
+    {
+      name: "[Actor]: Walk from bar to jukebox, push aside [User]",
+      human_readable: "Goes from bar to jukebox. 'Get out of the way User'",
+      conditions: [
+        "practice.tendBar.Bartender.customer.Actor",
+        "practice.jukebox.thejukebox.inUseBy!User",
+        "NOT practice.jukebox.thejukebox.inUseBy!Actor",
+        "NEQ Actor Bartender"
+      ],
+      outcomes: [
+        "insert practice.jukebox.thejukebox.inUseBy!Actor",
+        "insert characters.User.angryat.Actor",
+        "delete practice.tendBar.Bartender.customer.Actor"
+      ]
     }
-    // {
-    //   name: "[Actor]: "
-    // }
-    // ,{
-    //   name: "[Actor]: Clean up spill near [Customer]",
-    //   human_readable: "Cleans up Customer's spilt drink",
-    //   conditions: [
-    //     "practice.tendBar.Bartender.customer.Customer!spill"
-    //   ],
-    //   outcomes: [
-    //     "delete practice.tendBar.Bartender.customer.Customer!spill"
-    //     // FIXME mark politeness stuff for bartender vs spiller vs other customer cleaning it up?
-    //     // make the bartender more annoyed?
-    //   ]
-    // }
   ]
 };
 
@@ -718,9 +851,9 @@ const coffeePractice = {
 
 
 
-window.practiceDefs = [greetPractice, tendBarPractice, spill, fight/*, coffeePractice , ticTacToePractice */];
+window.practiceDefs = [greetPractice, tendBarPractice, spill, fight, jukebox/*, coffeePractice , ticTacToePractice */];
 
-window.practicesActive = {spill: [], fight: [], coffee: [], ticTacToe: [], tendBar: ["All"], greet: ["All"]}
+window.practicesActive = {spill: [], fight: [], coffee: [], ticTacToe: [], jukebox: ["All"], tendBar: ["All"], greet: ["All"]}
 
 
 
